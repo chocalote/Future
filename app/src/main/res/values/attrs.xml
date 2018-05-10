@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="GradientView">
+        <attr name="StringToShow" format="reference"/>
+        <attr name="TextSize" format="dimension"/>
+        <attr name="TextColor" format="integer"/>
+        <attr name="SlideColor" format="integer"/>
+    </declare-styleable>
+</resources>

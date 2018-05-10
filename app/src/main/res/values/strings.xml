@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">策略期货</string>
+    <string name="string_contract">合约</string>
+    <string name="string_strategy">策略</string>
+    <string name="string_transaction">交易</string>
+    <string name="string_setting">设置</string>
+
+    <string name="string_optional_shares">自选</string>
+    <string name="string_edit">编辑</string>
 </resources>
