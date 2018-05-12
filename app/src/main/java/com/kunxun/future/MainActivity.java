@@ -1,8 +1,5 @@
 package com.kunxun.future;
 
-
-import android.graphics.Typeface;
-import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -56,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public class FragmentAdapter extends FragmentPagerAdapter {
         private List<Fragment> mFragmentList;
 
-        public FragmentAdapter(FragmentManager fm, List<Fragment> fragmentList) {
+        private FragmentAdapter(FragmentManager fm, List<Fragment> fragmentList) {
             super(fm);
             mFragmentList = fragmentList;
         }
@@ -87,11 +84,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         ContractFragment contractFragment = new ContractFragment();
         StrategyFragment strategyFragment = new StrategyFragment();
-        TransactionFragment transactionFragment = new TransactionFragment();
+        LoginFragment loginFragment = new LoginFragment();
         SettingFragment settingFragment = new SettingFragment();
         mFragmentList.add(contractFragment);
         mFragmentList.add(strategyFragment);
-        mFragmentList.add(transactionFragment);
+        mFragmentList.add(loginFragment);
         mFragmentList.add(settingFragment);
     }
 

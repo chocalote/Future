@@ -7,10 +7,12 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ContractFragment extends Fragment {
@@ -22,14 +24,22 @@ public class ContractFragment extends Fragment {
         return view;
     }
 
-    private void updateLayout(View view){
-        List<String> stringList = new ArrayList<>();
-        for (int i =0; i<5;i++)
-        {
-            stringList.add(String.valueOf(i));
+    private void updateLayout(View view) {
+        List<HashMap<String, String>> listData = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            HashMap<String, String> item = new HashMap<>();
+            item.put("Name", "RS180" + String.valueOf(i));
+            item.put("LatestPrice", "201" + String.valueOf(i));
+            item.put("Change", "2" + String.valueOf(i));
+
+            listData.add(item);
         }
         ListView mListView = view.findViewById(R.id.mContractList);
-        ArrayAdapter listViewAdapter = new ArrayAdapter(getActivity(),android.R.layout.simple_list_item_1,stringList);
+        SimpleAdapter listViewAdapter = new SimpleAdapter(getActivity(), listData, R.layout.listitem_contract,
+                new String[]{"Name", "LatestPrice", "Change"}, new int[]{R.id.contractName, R.id.contractLatestPrice, R.id.contractChange});
+
+
         mListView.setAdapter(listViewAdapter);
 
         SwipeRefreshLayout mSwipeLayout = view.findViewById(R.id.mSwipeRefreshLayout);
@@ -41,7 +51,7 @@ public class ContractFragment extends Fragment {
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
+                Toast.makeText(getContext(), "Refresh", Toast.LENGTH_LONG).show();
             }
         });
 
