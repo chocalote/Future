@@ -1,141 +1,63 @@
 package com.kunxun.future;
 
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.TextView;
+
+import com.kunxun.future.fragment.ContractFragment;
+import com.kunxun.future.fragment.LoginFragment;
+import com.kunxun.future.fragment.SettingFragment;
+import com.kunxun.future.fragment.StrategyFragment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private List<Fragment> mFragmentList = new ArrayList<>();
-    private ViewPager mViewPager;
-    private TextView tvContract, tvStrategy, tvTransaction, tvSetting;
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        updateLayout();
+        List<String> tabIndicators = new ArrayList<>();
+        List<Fragment> tabFragments = new ArrayList<>();
 
-        FragmentAdapter mFragmentAdapter = new FragmentAdapter(this.getSupportFragmentManager(), mFragmentList);
-        mViewPager = findViewById(R.id.mViewPager);
-        mViewPager.setOffscreenPageLimit(4);
-        mViewPager.setAdapter(mFragmentAdapter);
-        mViewPager.setCurrentItem(0);
-
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                changeTextFont(position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
-    }
-
-    public class FragmentAdapter extends FragmentPagerAdapter {
-        private List<Fragment> mFragmentList;
-
-        private FragmentAdapter(FragmentManager fm, List<Fragment> fragmentList) {
-            super(fm);
-            mFragmentList = fragmentList;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-    }
-
-    private void updateLayout() {
-
-        tvContract = findViewById(R.id.tvContract);
-        tvContract.setTextColor(getResources().getColor(R.color.colorAccent));
-        tvStrategy = findViewById(R.id.tvStrategy);
-        tvTransaction = findViewById(R.id.tvTransaction);
-        tvSetting = findViewById(R.id.tvSetting);
-
-        tvContract.setOnClickListener(this);
-        tvStrategy.setOnClickListener(this);
-        tvTransaction.setOnClickListener(this);
-        tvSetting.setOnClickListener(this);
+        tabIndicators.add(getResources().getString(R.string.string_contract));
+        tabIndicators.add(getResources().getString(R.string.string_strategy));
+        tabIndicators.add(getResources().getString(R.string.string_transaction));
+        tabIndicators.add(getResources().getString(R.string.string_setting));
 
         ContractFragment contractFragment = new ContractFragment();
         StrategyFragment strategyFragment = new StrategyFragment();
         LoginFragment loginFragment = new LoginFragment();
         SettingFragment settingFragment = new SettingFragment();
-        mFragmentList.add(contractFragment);
-        mFragmentList.add(strategyFragment);
-        mFragmentList.add(loginFragment);
-        mFragmentList.add(settingFragment);
-    }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.tvContract:
-                mViewPager.setCurrentItem(0, true);
-                break;
-            case R.id.tvStrategy:
-                mViewPager.setCurrentItem(1, true);
-                break;
-            case R.id.tvTransaction:
-                mViewPager.setCurrentItem(2, true);
-                break;
-            case R.id.tvSetting:
-                mViewPager.setCurrentItem(3, true);
-                break;
-        }
-    }
+        tabFragments.add(contractFragment);
+        tabFragments.add(strategyFragment);
+        tabFragments.add(loginFragment);
+        tabFragments.add(settingFragment);
 
-    private void changeTextFont(int position) {
-        switch (position) {
-            case 0:
-                tvContract.setTextColor(getResources().getColor(R.color.colorAccent));
-                tvStrategy.setTextColor(getResources().getColor(R.color.colorPrimary));
-                tvTransaction.setTextColor(getResources().getColor(R.color.colorPrimary));
-                tvSetting.setTextColor(getResources().getColor(R.color.colorPrimary));
-                break;
-            case 1:
-                tvContract.setTextColor(getResources().getColor(R.color.colorPrimary));
-                tvStrategy.setTextColor(getResources().getColor(R.color.colorAccent));
-                tvTransaction.setTextColor(getResources().getColor(R.color.colorPrimary));
-                tvSetting.setTextColor(getResources().getColor(R.color.colorPrimary));
-                break;
-            case 2:
-                tvContract.setTextColor(getResources().getColor(R.color.colorPrimary));
-                tvStrategy.setTextColor(getResources().getColor(R.color.colorPrimary));
-                tvTransaction.setTextColor(getResources().getColor(R.color.colorAccent));
-                tvSetting.setTextColor(getResources().getColor(R.color.colorPrimary));
-                break;
-            case 3:
-                tvContract.setTextColor(getResources().getColor(R.color.colorPrimary));
-                tvStrategy.setTextColor(getResources().getColor(R.color.colorPrimary));
-                tvTransaction.setTextColor(getResources().getColor(R.color.colorPrimary));
-                tvSetting.setTextColor(getResources().getColor(R.color.colorAccent));
-                break;
+        FragmentAdapter mFragmentAdapter = new FragmentAdapter(this.getSupportFragmentManager(), tabFragments);
+        ViewPager mViewPager = findViewById(R.id.mViewPager);
+        mViewPager.setOffscreenPageLimit(4);
+        mViewPager.setAdapter(mFragmentAdapter);
+        mViewPager.setCurrentItem(0);
+
+        TabLayout mTabLayout = findViewById(R.id.tbLayout);
+        mTabLayout.setTabMode(TabLayout.MODE_FIXED);
+        mTabLayout.setTabTextColors(ContextCompat.getColor(this, R.color.colorPrimary), ContextCompat.getColor(this, R.color.colorAccent));
+        mTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.colorAccent));
+        ViewCompat.setElevation(mTabLayout, 10);
+
+        mTabLayout.setupWithViewPager(mViewPager);
+
+        for (int i = 0; i < tabIndicators.size(); i++) {
+            Objects.requireNonNull(mTabLayout.getTabAt(i)).setText(tabIndicators.get(i));
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.kunxun.future;
+package com.kunxun.future.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,16 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class StrategyFragment extends Fragment {
+import com.kunxun.future.R;
+
+
+public class ShortFragment extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_strategy, container, false);
-        //updateLayout(view);
-        return view;
+        return inflater.inflate(R.layout.fragment_short, container, false);
     }
-
-//    private void updateLayout(View view) {}
-
 }

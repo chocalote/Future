@@ -1,4 +1,4 @@
-package com.kunxun.future;
+package com.kunxun.future.fragment;
 
 import android.support.v4.app.Fragment;
 

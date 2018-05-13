@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,55 +10,16 @@
         android:id="@+id/mViewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/colorAccent"/>
+        android:background="@color/colorAccent" />
 
-    <LinearLayout
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tbLayout"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:baselineAligned="false"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:id="@+id/tvContract"
-            android:textColor="@color/colorPrimary"
-            android:text="@string/string_contract"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:id="@+id/tvStrategy"
-            android:textColor="@color/colorPrimary"
-            android:text="@string/string_strategy"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:textColor="@color/colorPrimary"
-            android:id="@+id/tvTransaction"
-            android:text="@string/string_transaction"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:textColor="@color/colorPrimary"
-            android:id="@+id/tvSetting"
-            android:text="@string/string_setting"/>
-
-    </LinearLayout>
-
+        android:layout_height="40dp" />
 
 </LinearLayout>

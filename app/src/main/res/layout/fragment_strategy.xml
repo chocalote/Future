@@ -10,7 +10,7 @@
         android:layout_height="40dp">
 
         <TextView
-            android:id="@+id/tvEdit"
+            android:id="@+id/tvStrategyEdit"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
@@ -19,7 +19,6 @@
             android:text="@string/string_edit" />
 
         <TextView
-            android:id="@+id/tvOptionalShares"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -29,10 +28,23 @@
             android:textStyle="bold" />
 
     </RelativeLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/colorAccent" />
-    
+
+    <android.support.design.widget.TabLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:id="@+id/tbStrategy"
+        />
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/vpStrategy"/>
+
 
 </LinearLayout>

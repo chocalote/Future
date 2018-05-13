@@ -24,4 +24,7 @@
     <string name="password_show">可见</string>
     <string name="string_validate_code">验证码</string>
     <string name="action_sign_in">登录</string>
+
+    <string name="string_strategy_long">多仓</string>
+    <string name="string_strategy_short">空仓</string>
 </resources>

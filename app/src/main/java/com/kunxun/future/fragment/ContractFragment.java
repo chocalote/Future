@@ -1,4 +1,4 @@
-package com.kunxun.future;
+package com.kunxun.future.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
+
+import com.kunxun.future.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
