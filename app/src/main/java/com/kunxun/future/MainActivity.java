@@ -1,6 +1,10 @@
 package com.kunxun.future;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -9,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.kunxun.future.fragment.ContractFragment;
+import com.kunxun.future.fragment.FragmentAdapter;
 import com.kunxun.future.fragment.LoginFragment;
 import com.kunxun.future.fragment.SettingFragment;
 import com.kunxun.future.fragment.StrategyFragment;
@@ -19,10 +24,18 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        verifyStoragePermissions(this);
 
         List<String> tabIndicators = new ArrayList<>();
         List<Fragment> tabFragments = new ArrayList<>();
@@ -58,6 +71,20 @@ public class MainActivity extends AppCompatActivity {
 
         for (int i = 0; i < tabIndicators.size(); i++) {
             Objects.requireNonNull(mTabLayout.getTabAt(i)).setText(tabIndicators.get(i));
+        }
+    }
+
+    private static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
         }
     }
 }

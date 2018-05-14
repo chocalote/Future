@@ -11,7 +11,6 @@ package com.kunxun.future.fragment;
         import android.view.View;
         import android.view.ViewGroup;
 
-        import com.kunxun.future.FragmentAdapter;
         import com.kunxun.future.R;
 
         import java.util.ArrayList;
