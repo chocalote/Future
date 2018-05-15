@@ -1,9 +1,11 @@
 package com.kunxun.future.fragment;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
-import android.print.PrinterId;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -11,8 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,14 +26,12 @@ import com.kunxun.future.adapter.CommonViewHolder;
 import com.sfit.ctp.thostmduserapi.CThostFtdcDepthMarketDataField;
 import com.sfit.ctp.thostmduserapi.CThostFtdcForQuoteRspField;
 import com.sfit.ctp.thostmduserapi.CThostFtdcMdApi;
-import com.sfit.ctp.thostmduserapi.CThostFtdcMdSpi;
 import com.sfit.ctp.thostmduserapi.CThostFtdcReqUserLoginField;
 import com.sfit.ctp.thostmduserapi.CThostFtdcRspInfoField;
 import com.sfit.ctp.thostmduserapi.CThostFtdcRspUserLoginField;
 import com.sfit.ctp.thostmduserapi.CThostFtdcSpecificInstrumentField;
 import com.sfit.ctp.thostmduserapi.CThostFtdcUserLogoutField;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +43,7 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
         System.loadLibrary("thostmduserapi_wrap");
     }
 
+    private static final String TAG = "Lily";
     public static CThostFtdcMdApi mdApi;
     private int iRequestId = 0;
     private static final String FRONT_ADDRESS = "tcp://180.168.146.187:10010";
@@ -51,11 +52,12 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
     private static final String PASSWORD = "chen8885257";
 
     private String[] INSTRUMENTS = {"rb1810", "cu1807", "sc1809"};
-    private String[] INSTRUMENTNAMES = {"螺纹1810", "沪铜1807", "原油1809"};
+    private String[] INSTRUMENT_NAMES = {"螺纹1810", "沪铜1807", "原油1809"};
     private List<HashMap<String, String>> listData = new ArrayList<>();
 
     private ListView mListView;
     private CommonAdapter commonAdapter;
+    private TextView tv_Edit;
 
     @Nullable
     @Override
@@ -63,12 +65,35 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contract, container, false);
 
-//        mdRequest();
         initLayout(view);
+
+        new Thread(mRunnable).start();
 
         return view;
     }
 
+
+    private Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Log.i(TAG, Thread.currentThread().getName());
+            mdRequest();
+        }
+    };
+
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0x001:
+                    int position = (int) msg.obj;
+                    updateListViewItem(position);
+                    break;
+
+            }
+        }
+    };
 
     //region mdRequest
     private void mdRequest() {
@@ -95,7 +120,7 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
         for (int i = 0; i < INSTRUMENTS.length; i++) {
             HashMap<String, String> item = new HashMap<>();
             item.put("Name", INSTRUMENTS[i]);
-            item.put("SubName", INSTRUMENTNAMES[i]);
+            item.put("SubName", INSTRUMENT_NAMES[i]);
             item.put("LatestPrice", "--");
             item.put("Change", "--");
 
@@ -106,14 +131,14 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
             @Override
             protected void convertView(View item, HashMap<String, String> map) {
 
-                int change = 0;
-                if (map.get("Change") != "--") {
-                    change = Integer.parseInt(map.get("Change"));
+                float change = 0;
+                if (!map.get("Change").equals("--")) {
+                    change = Float.parseFloat(map.get("Change"));
                 }
 
                 TextView tvName = CommonViewHolder.get(item, R.id.contractName);
-                tvName.setText("  " + map.get("Name"));
-                tvName.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                String tmp = "  " + map.get("Name");
+                tvName.setText(tmp);
 
                 TextView tvSubName = CommonViewHolder.get(item, R.id.contractSubName);
                 tvSubName.setText(map.get("SubName"));
@@ -125,31 +150,47 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
                 tvChange.setText(map.get("Change"));
 
                 if (change < 0) {
-                    tvLatestPrice.setTextColor(Color.GREEN);
-                    tvChange.setTextColor(Color.GREEN);
+                    tvLatestPrice.setTextColor(getResources().getColor(R.color.colorAccent));
+                    tvChange.setTextColor(getResources().getColor(R.color.colorAccent));
 
                 }
                 if (change > 0) {
-                    tvLatestPrice.setTextColor(Color.RED);
-                    tvChange.setTextColor(Color.RED);
+                    tvLatestPrice.setTextColor(getResources().getColor(R.color.colorRed));
+                    tvChange.setTextColor(getResources().getColor(R.color.colorRed));
                 }
             }
         };
 
         mListView.setAdapter(commonAdapter);
 
-        SwipeRefreshLayout mSwipeLayout = view.findViewById(R.id.mSwipeRefreshLayout);
-        mSwipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
-
-        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        tv_Edit = view.findViewById(R.id.tvEdit);
+        tv_Edit.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onRefresh() {
-                Toast.makeText(getContext(), "Refresh", Toast.LENGTH_LONG).show();
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Coming soon...", Toast.LENGTH_LONG).show();
             }
         });
+
+        ImageButton imgbtn_Search = view.findViewById(R.id.imgbtnSearch);
+        imgbtn_Search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Coming soon...", Toast.LENGTH_LONG).show();
+            }
+        });
+
+//        SwipeRefreshLayout mSwipeLayout = view.findViewById(R.id.mSwipeRefreshLayout);
+//        mSwipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+//                android.R.color.holo_green_light,
+//                android.R.color.holo_orange_light,
+//                android.R.color.holo_red_light);
+//
+//        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                Toast.makeText(getContext(), "Refresh", Toast.LENGTH_LONG).show();
+//            }
+//        });
     }
 
     private void updateListViewItem(int position) {
@@ -171,7 +212,7 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
         loginField.setUserID(USER_ID);
         loginField.setPassword(PASSWORD);
         int iResult = mdApi.ReqUserLogin(loginField, ++iRequestId);
-        Log.i("Lily", "--->发送用户登录请求: " + ((iResult == 0) ? "成功" : "失败"));
+        Log.i(TAG, "--->发送用户登录请求: " + ((iResult == 0) ? "成功" : "失败"));
     }
 
     public void OnFrontDisconnected(int nReason) {
@@ -186,11 +227,11 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
     public void OnRspUserLogin(CThostFtdcRspUserLoginField pRspUserLogin,
                                CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
         if (bIsLast && pRspInfo.getErrorID() == 0) {
-            Log.i("Lily", "--->当前交易日:" + pRspUserLogin.getTradingDay());
+            Log.i(TAG, "--->当前交易日:" + pRspUserLogin.getTradingDay());
 
-            String[] ins = {"rb1810"};
-            int iResult = mdApi.SubscribeMarketData(ins, ins.length);
-            Log.i("Lily", "--->>> 发送行情订阅请求: " + ((iResult == 0) ? "成功" : "失败"));
+//            String[] ins = {"rb1810"};
+            int iResult = mdApi.SubscribeMarketData(INSTRUMENTS, INSTRUMENTS.length);
+            Log.i(TAG, "--->>> 发送行情订阅请求: " + ((iResult == 0) ? "成功" : "失败"));
         }
     }
 
@@ -224,17 +265,26 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
     }
 
     public void OnRtnDepthMarketData(CThostFtdcDepthMarketDataField pDepthMarketData) {
-        int position = 0;
+        Log.i(TAG,pDepthMarketData.getUpdateTime()+": "+pDepthMarketData.getInstrumentID()+ ", "+ pDepthMarketData.getLastPrice());
+
+        int position;
         for (int i = 0; i < listData.size(); i++) {
             if (listData.get(i).get("Name").equals(pDepthMarketData.getInstrumentID())) {
                 position = i;
                 HashMap<String, String> item = listData.get(i);
-                item.remove("LatestPrice");
-                item.put("LatestPrice", String.valueOf(pDepthMarketData.getLastPrice()));
-                item.remove("Change");
-                item.put("Change", String.valueOf(pDepthMarketData.getLastPrice() - pDepthMarketData.getOpenPrice()));
-                listData.set(position, item);
-                updateListViewItem(position);
+                if (!item.get("LatestPrice").equals(String.valueOf(pDepthMarketData.getLastPrice()))) {
+                    item.remove("LatestPrice");
+                    item.put("LatestPrice", String.valueOf(pDepthMarketData.getLastPrice()));
+                    item.remove("Change");
+                    double change = pDepthMarketData.getLastPrice() - pDepthMarketData.getOpenPrice();
+                    change = (Math.round(change*10))/10;
+                    item.put("Change", String.valueOf(change));
+                    listData.set(position, item);
+                    Message msg = Message.obtain();
+                    msg.what = 0x001;
+                    msg.obj = position;
+                    mHandler.sendMessage(msg);
+                }
                 break;
             }
         }

@@ -25,6 +25,25 @@
     <string name="string_validate_code">验证码</string>
     <string name="action_sign_in">登录</string>
 
-    <string name="string_strategy_long">多仓</string>
-    <string name="string_strategy_short">空仓</string>
+    <string name="strategy_operation">操作</string>
+    <string name="strategy_long_open">多开</string>
+    <string name="strategy_long_close">多平</string>
+    <string name="strategy_short_open">空开</string>
+    <string name="strategy_short_close">空平</string>
+    <string name="strategy_op_add">新增</string>
+
+
+
+    <string name="strategy_long_1day">日均线趋势</string>
+    <string name="strategy_long_1hour">60分钟均线趋势</string>
+    <string name="strategy_long_5min">5分钟均线趋势</string>
+    <string name="strategy_long_1min">1分钟MACD线趋势</string>
+    
+    <string name="tendency_long">向上</string>
+    <string name="tendency_short">向下</string>
+    <string name="tendency_golden">金叉</string>
+    <string name="tendency_dead">死叉</string>
+
+
+
 </resources>

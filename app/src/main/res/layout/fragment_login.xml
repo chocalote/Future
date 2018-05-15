@@ -33,6 +33,7 @@
         android:paddingLeft="20dp"
         android:paddingRight="20dp">
 
+        <!--region Server-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -72,7 +73,9 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/colorPrimaryDark" />
+        <!--endregion-->
 
+        <!--region UserId-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -104,7 +107,9 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/colorPrimaryDark" />
+        <!--endregion-->
 
+        <!--region Password-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -135,7 +140,9 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/colorPrimaryDark" />
+        <!--endregion-->
 
+        <!--region ValidationCode-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -162,6 +169,7 @@
                 android:contentDescription="@string/string_validate_code"
                 />
         </LinearLayout>
+        <!--endregion-->
 
     </LinearLayout>
 
