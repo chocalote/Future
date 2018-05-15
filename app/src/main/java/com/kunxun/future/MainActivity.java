@@ -37,6 +37,12 @@ public class MainActivity extends AppCompatActivity {
 
         verifyStoragePermissions(this);
 
+        initLayout();
+    }
+
+    //region initLayout
+    private void initLayout(){
+
         List<String> tabIndicators = new ArrayList<>();
         List<Fragment> tabFragments = new ArrayList<>();
 
@@ -73,7 +79,9 @@ public class MainActivity extends AppCompatActivity {
             Objects.requireNonNull(mTabLayout.getTabAt(i)).setText(tabIndicators.get(i));
         }
     }
+    //endregion
 
+    //region verifyStoragePermissions
     private static void verifyStoragePermissions(Activity activity) {
         // Check if we have write permission
         int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -87,4 +95,5 @@ public class MainActivity extends AppCompatActivity {
             );
         }
     }
+    //endregion
 }

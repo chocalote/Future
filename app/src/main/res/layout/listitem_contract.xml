@@ -1,28 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="30dp"
+    android:layout_height="50dp"
     android:orientation="horizontal"
     android:weightSum="1">
 
-    <TextView
-        android:id="@+id/contractName"
-        style="@style/contractStyle"
+    <RelativeLayout
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.5"        />
+        android:layout_weight="0.5"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/contractSubName"
+            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+                  />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/contractName"
+            android:textSize="12sp"
+            android:layout_alignBaseline ="@id/contractSubName"
+            android:layout_toEndOf="@id/contractSubName"/>
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/contractLatestPrice"
         style="@style/contractStyle"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_weight="0.3" />
 
     <TextView
         android:id="@+id/contractChange"
         style="@style/contractStyle"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_weight="0.2" />
 
 </LinearLayout>
