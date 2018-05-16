@@ -1,14 +1,12 @@
 package com.kunxun.future.fragment;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,7 +55,6 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
 
     private ListView mListView;
     private CommonAdapter commonAdapter;
-    private TextView tv_Edit;
 
     @Nullable
     @Override
@@ -67,17 +64,24 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
 
         initLayout(view);
 
-        new Thread(mRunnable).start();
+        new Thread(mdDataRunnable).start();
 
         return view;
     }
 
 
-    private Runnable mRunnable = new Runnable() {
+    private Runnable mdDataRunnable = new Runnable() {
         @Override
         public void run() {
             Log.i(TAG, Thread.currentThread().getName());
             mdRequest();
+        }
+    };
+
+    private Runnable saveDataRunnable = new Runnable() {
+        @Override
+        public void run() {
+
         }
     };
 
@@ -163,7 +167,7 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
 
         mListView.setAdapter(commonAdapter);
 
-        tv_Edit = view.findViewById(R.id.tvEdit);
+        TextView tv_Edit = view.findViewById(R.id.tvEdit);
         tv_Edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

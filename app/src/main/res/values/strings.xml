@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">策略期货</string>
 
     <string name="string_contract">合约</string>
@@ -34,16 +34,17 @@
 
 
 
-    <string name="strategy_long_1day">日均线趋势</string>
-    <string name="strategy_long_1hour">60分钟均线趋势</string>
-    <string name="strategy_long_5min">5分钟均线趋势</string>
-    <string name="strategy_long_1min">1分钟MACD线趋势</string>
+    <string name="strategy_day">日均线趋势</string>
+    <string name="strategy_hour">60分钟均线趋势</string>
+    <string name="strategy_5min">5分钟均线趋势</string>
+    <string name="strategy_min">1分钟MACD线趋势</string>
     
     <string name="tendency_long">向上</string>
     <string name="tendency_short">向下</string>
     <string name="tendency_golden">金叉</string>
     <string name="tendency_dead">死叉</string>
 
+    <string name="tendency_memo">"趋势向上：价格在均线以上，均线走势向上 \n趋势向下：价格在均线之下，均线走势向下 \n \n<xliff:g id="STRATEGY">%s</xliff:g>"</string>
 
 
 </resources>

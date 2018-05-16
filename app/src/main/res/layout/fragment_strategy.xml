@@ -34,37 +34,44 @@
             android:text="@string/strategy_operation" />
 
         <RadioGroup
+            android:id="@+id/rgOperation"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.8"
+            android:checkedButton="@id/rbOpLongOpen"
             android:gravity="center"
             android:orientation="horizontal">
 
             <RadioButton
+                android:id="@+id/rbOpLongOpen"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
                 android:text="@string/strategy_long_open" />
 
             <RadioButton
+                android:id="@+id/rbOpLongClose"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
                 android:text="@string/strategy_long_close" />
 
             <RadioButton
+                android:id="@+id/rbOpShortOpen"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
                 android:text="@string/strategy_short_open" />
 
             <RadioButton
+                android:id="@+id/rbOpShortClose"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
                 android:text="@string/strategy_short_close" />
         </RadioGroup>
     </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -91,30 +98,37 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.4"
-                android:text="@string/strategy_long_1day" />
+                android:text="@string/strategy_day" />
 
             <RadioGroup
+                android:id="@+id/rgDayTendency"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.45"
+                android:checkedButton="@id/rbDayTendencyUp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
                 <RadioButton
+                    android:id="@+id/rbDayTendencyUp"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_weight="0.5"
+                    android:clickable="false"
                     android:text="@string/tendency_long" />
 
                 <RadioButton
+                    android:id="@+id/rbDayTendencyDown"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
+                    android:clickable="false"
                     android:text="@string/tendency_short" />
             </RadioGroup>
 
             <Switch
+                android:id="@+id/sthDayTendency"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.15"
@@ -137,30 +151,37 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.4"
-                android:text="@string/strategy_long_1hour" />
+                android:text="@string/strategy_hour" />
 
             <RadioGroup
+                android:id="@+id/rgHourTendency"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.45"
+                android:checkedButton="@id/rbHourTendencyUp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
                 <RadioButton
+                    android:id="@+id/rbHourTendencyUp"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_weight="0.5"
+                    android:clickable="false"
                     android:text="@string/tendency_long" />
 
                 <RadioButton
+                    android:id="@+id/rbHourTendencyDown"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
+                    android:clickable="false"
                     android:text="@string/tendency_short" />
             </RadioGroup>
 
             <Switch
+                android:id="@+id/sthHourTendency"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.15"
@@ -183,30 +204,37 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.4"
-                android:text="@string/strategy_long_5min" />
+                android:text="@string/strategy_5min" />
 
             <RadioGroup
+                android:id="@+id/rg5MinutesTendency"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.45"
+                android:checkedButton="@id/rb5MinutesTendencyUp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
                 <RadioButton
+                    android:id="@+id/rb5MinutesTendencyUp"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_weight="0.5"
+                    android:clickable="false"
                     android:text="@string/tendency_long" />
 
                 <RadioButton
+                    android:id="@+id/rb5MinutesTendencyDown"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
+                    android:clickable="false"
                     android:text="@string/tendency_short" />
             </RadioGroup>
 
             <Switch
+                android:id="@+id/sth5MinutesTendency"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.15"
@@ -229,30 +257,37 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.4"
-                android:text="@string/strategy_long_1min" />
+                android:text="@string/strategy_min" />
 
             <RadioGroup
+                android:id="@+id/rgMinuteTendency"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.45"
+                android:checkedButton="@id/rbMinuteTendencyGolden"
                 android:gravity="center"
                 android:orientation="horizontal">
 
                 <RadioButton
+                    android:id="@+id/rbMinuteTendencyGolden"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_weight="0.5"
+                    android:clickable="false"
                     android:text="@string/tendency_golden" />
 
                 <RadioButton
+                    android:id="@+id/rbMinuteTendencyDead"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
+                    android:clickable="false"
                     android:text="@string/tendency_dead" />
             </RadioGroup>
 
             <Switch
+                android:id="@+id/sthMinuteTendency"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.15"
@@ -269,14 +304,15 @@
         android:background="@color/colorAccent" />
 
     <TextView
+        android:id="@+id/tvTendencyMemo"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:textSize="12sp"
-        android:textColor="@color/colorPrimaryDark"
-        android:layout_marginRight="20dp"
         android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginTop="15dp"
-        android:visibility="visible"
-        android:background="@color/colorAccent"/>
+        android:text="@string/tendency_memo"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="12sp"
+        android:visibility="visible" />
 
 </LinearLayout>
