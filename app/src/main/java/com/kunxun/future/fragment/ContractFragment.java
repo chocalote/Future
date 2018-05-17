@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +56,8 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
 
     private ListView mListView;
     private CommonAdapter commonAdapter;
+    private SwipeRefreshLayout mSwipeLayout;
+    private int threadCount =0;
 
     @Nullable
     @Override
@@ -73,17 +76,19 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
     private Runnable mdDataRunnable = new Runnable() {
         @Override
         public void run() {
-            Log.i(TAG, Thread.currentThread().getName());
+            Log.i(TAG, Thread.currentThread().getName()+" "+ threadCount);
+            threadCount++;
             mdRequest();
         }
     };
 
-    private Runnable saveDataRunnable = new Runnable() {
-        @Override
-        public void run() {
+//    private Runnable saveDataRunnable = new Runnable() {
+//        @Override
+//        public void run() {
+//
+//        }
+//    };
 
-        }
-    };
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler(){
@@ -91,6 +96,10 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0x001:
+                    if(mSwipeLayout.isRefreshing())
+                    {
+                        mSwipeLayout.setRefreshing(false);
+                    }
                     int position = (int) msg.obj;
                     updateListViewItem(position);
                     break;
@@ -103,7 +112,7 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
     private void mdRequest() {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 
-            String file = getContext().getCacheDir().toString();
+            String file = getContext().getFilesDir().toString();
 
             CMdSpi mdSpi = new CMdSpi();
             mdSpi.setInterface(this);
@@ -183,18 +192,19 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
             }
         });
 
-//        SwipeRefreshLayout mSwipeLayout = view.findViewById(R.id.mSwipeRefreshLayout);
-//        mSwipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
-//                android.R.color.holo_green_light,
-//                android.R.color.holo_orange_light,
-//                android.R.color.holo_red_light);
-//
-//        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                Toast.makeText(getContext(), "Refresh", Toast.LENGTH_LONG).show();
-//            }
-//        });
+        mSwipeLayout = view.findViewById(R.id.mSwipeRefreshLayout);
+        mSwipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Toast.makeText(getContext(), "Refresh", Toast.LENGTH_LONG).show();
+                new Thread(mdDataRunnable).start();
+            }
+        });
     }
 
     private void updateListViewItem(int position) {

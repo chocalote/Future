@@ -47,25 +47,28 @@
                 android:text="@string/string_choose_server" />
 
             <RadioGroup
+                android:id="@+id/rgServer"
                 style="@style/contractStyle"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.7"
+                android:checkedButton="@+id/rbServer10000"
                 android:orientation="horizontal">
 
                 <RadioButton
+                    android:id="@+id/rbServer10000"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
                     android:layout_weight="0.5"
-                    android:text="@string/server_10000"
-                    android:layout_marginStart="20dp" />
+                    android:text="@string/server_10000" />
 
                 <RadioButton
+                    android:id="@+id/rbServer10010"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:text="@string/server_10086" />
+                    android:text="@string/server_10010" />
             </RadioGroup>
         </LinearLayout>
 
@@ -76,6 +79,7 @@
         <!--endregion-->
 
         <!--region UserId-->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -83,23 +87,27 @@
             android:weightSum="1">
 
             <TextView
-                android:gravity="center_vertical"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.3"
+                android:gravity="center_vertical"
                 android:text="@string/string_account" />
-            <EditText
+
+            <AutoCompleteTextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:inputType="number"
+                android:layout_weight="0.48"
                 android:hint="@string/string_account"
-                android:layout_weight="0.48"/>
+                android:inputType="number"
+                android:id="@+id/actvUserId"/>
+
             <CheckBox
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.22"
                 android:text="@string/string_remember"
-                />
+                android:checked="true"
+                android:id="@+id/ckRemember"/>
 
         </LinearLayout>
 
@@ -122,17 +130,20 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.3"
                 android:text="@string/string_password" />
+
             <EditText
+                android:id="@+id/etPassword"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:inputType="number"
+                android:layout_weight="0.48"
                 android:hint="@string/string_password"
-                android:layout_weight="0.48"/>
+                android:inputType="textPassword" />
             <CheckBox
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.22"
                 android:text="@string/password_show"
+                android:id="@+id/ckVisible"
                 />
         </LinearLayout>
 
@@ -158,15 +169,17 @@
             <EditText
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:inputType="number"
                 android:hint="@string/string_validate_code"
-                android:layout_weight="0.48"/>
+                android:inputType="text"
+                android:layout_weight="0.48"
+                android:id="@+id/etValidateCode"/>
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.22"
                 android:src="@drawable/validate_code"
                 android:contentDescription="@string/string_validate_code"
+                android:id="@+id/imgValidateCode"
                 />
         </LinearLayout>
         <!--endregion-->
@@ -182,6 +195,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/action_sign_in"
-        android:layout_margin="10dp"/>
+        android:layout_margin="10dp"
+        android:id="@+id/btnLogin"/>
 
 </LinearLayout>

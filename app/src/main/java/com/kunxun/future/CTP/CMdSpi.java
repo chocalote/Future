@@ -9,11 +9,9 @@ import com.sfit.ctp.thostmduserapi.CThostFtdcRspUserLoginField;
 import com.sfit.ctp.thostmduserapi.CThostFtdcSpecificInstrumentField;
 import com.sfit.ctp.thostmduserapi.CThostFtdcUserLogoutField;
 
-import java.util.List;
-
 public class CMdSpi extends CThostFtdcMdSpi {
 
-    public IMdSpiEvent iMdSpiEvent;
+    private IMdSpiEvent iMdSpiEvent;
 
 
     public void setInterface(IMdSpiEvent i)

@@ -1,4 +1,4 @@
-package com.kunxun.future;
+package com.kunxun.future.Utils;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -12,6 +12,8 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Animation;
+
+import com.kunxun.future.R;
 
 public class GradientView extends View {
     private float mIndex = 0;
