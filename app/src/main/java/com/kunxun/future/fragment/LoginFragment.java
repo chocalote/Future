@@ -40,6 +40,7 @@ import com.sfit.ctp.thosttraderapi.CThostFtdcSettlementInfoConfirmField;
 import com.sfit.ctp.thosttraderapi.CThostFtdcTradeField;
 import com.sfit.ctp.thosttraderapi.CThostFtdcTraderApi;
 import com.sfit.ctp.thosttraderapi.CThostFtdcTradingAccountField;
+import com.sfit.ctp.thosttraderapi.CThostFtdcUserLogoutField;
 import com.sfit.ctp.thosttraderapi.THOST_TE_RESUME_TYPE;
 
 public class LoginFragment extends Fragment implements ITraderSpiEvent{
@@ -51,7 +52,7 @@ public class LoginFragment extends Fragment implements ITraderSpiEvent{
 
     private static final String TAG = "Lily";
 
-    private RadioGroup rgServer;
+//    private RadioGroup rgServer;
     private ImageView imgValidateCode;
     private EditText etPassword;
 
@@ -63,8 +64,6 @@ public class LoginFragment extends Fragment implements ITraderSpiEvent{
 
     private CodeUtils mCodeUtils;
     private Bitmap mBitmap;
-
-    private int threadCount =0;
 
     // 会话参数
     private int	FRONT_ID;	//前置编号 TThostFtdcFrontIDType
@@ -82,7 +81,7 @@ public class LoginFragment extends Fragment implements ITraderSpiEvent{
     }
 
     private void initLayout(View view){
-        rgServer = view.findViewById(R.id.rgServer);
+        RadioGroup rgServer = view.findViewById(R.id.rgServer);
         if (rgServer.getCheckedRadioButtonId() == R.id.rbServer10010){
             FRONT_ADDRESS = "tcp://27.115.78.155:41205";
         }
@@ -144,29 +143,22 @@ public class LoginFragment extends Fragment implements ITraderSpiEvent{
         boolean ret = false;
         if (userId == null || TextUtils.isEmpty(userId)) {
             Toast.makeText(getContext(), "用户名不能为空", Toast.LENGTH_SHORT).show();
-            return ret;
-        }
-        if (password == null || TextUtils.isEmpty(password)) {
+        } else if (password == null || TextUtils.isEmpty(password)) {
             Toast.makeText(getContext(), "密码不能为空", Toast.LENGTH_SHORT).show();
-            return ret;
-        }
-
-        if (validateCode == null || TextUtils.isEmpty(validateCode)) {
+        } else if (validateCode == null || TextUtils.isEmpty(validateCode)) {
             Toast.makeText(getContext(), "验证码不能为空", Toast.LENGTH_SHORT).show();
-            return ret;
-        }
-
-        if (!validateCode.equalsIgnoreCase(mCodeUtils.getCode())) {
+        } else if (!validateCode.equalsIgnoreCase(mCodeUtils.getCode())) {
             Toast.makeText(getContext(), "验证码错误，请重新输入", Toast.LENGTH_SHORT).show();
-            return ret;
+        } else {
+            ret = true;
         }
-        return true;
+        return ret;
     }
 
     private Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
-            Log.i(TAG, Thread.currentThread().getName()+" "+ threadCount);
+            Log.i(TAG, "LoginFragment: "+Thread.currentThread().getName());
             traderUserLogin();
         }
     };
@@ -175,7 +167,14 @@ public class LoginFragment extends Fragment implements ITraderSpiEvent{
     private Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+            switch (msg.what)
+            {
+                case 0x001:
+                    break;
+                case 0x110:
+                    break;
+
+            }
         }
     };
 
@@ -205,6 +204,10 @@ public class LoginFragment extends Fragment implements ITraderSpiEvent{
         int iResult = traderApi.ReqUserLogin(loginField, ++iRequestId);
         Log.i(TAG, "--->发送用户登录请求: " + ((iResult == 0) ? "成功" : "失败"));
         if (iResult == 0) {
+            CThostFtdcUserLogoutField logoutField = new CThostFtdcUserLogoutField();
+            logoutField.setBrokerID(BROKER_ID);
+            logoutField.setUserID(userId);
+            traderApi.ReqUserLogout(logoutField,--iResult);
             mHandler.sendEmptyMessage(0x001);
         }
         else {
@@ -215,22 +218,6 @@ public class LoginFragment extends Fragment implements ITraderSpiEvent{
     @Override
     public void OnRspUserLogin(CThostFtdcRspUserLoginField pRspUserLogin, CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
 
-        if (bIsLast && pRspInfo.getErrorID() == 0) {
-            Log.i(TAG, "--->当前交易日:" + pRspUserLogin.getTradingDay());
-
-            FRONT_ID = pRspUserLogin.getFrontID();
-            SESSION_ID = pRspUserLogin.getSessionID();
-            ORDER_REF = pRspUserLogin.getMaxOrderRef();
-
-
-//            CThostFtdcSettlementInfoConfirmField pSettlementInfoConfirm = new CThostFtdcSettlementInfoConfirmField();
-//            pSettlementInfoConfirm.setBrokerID(BROKER_ID);
-//            pSettlementInfoConfirm.setInvestorID(userId);
-
-//            String[] ins = {"rb1810"};
-//            int iResult = mdApi.SubscribeMarketData(INSTRUMENTS, INSTRUMENTS.length);
-//            Log.i(TAG, "--->>> 发送行情订阅请求: " + ((iResult == 0) ? "成功" : "失败"));
-        }
     }
 
     @Override

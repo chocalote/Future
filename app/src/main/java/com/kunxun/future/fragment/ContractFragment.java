@@ -1,12 +1,14 @@
 package com.kunxun.future.fragment;
 
-import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,38 +19,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kunxun.future.CTP.CMdSpi;
-import com.kunxun.future.CTP.IMdSpiEvent;
+import com.kunxun.future.CTP.MdService;
 import com.kunxun.future.R;
 import com.kunxun.future.adapter.CommonAdapter;
 import com.kunxun.future.adapter.CommonViewHolder;
-import com.sfit.ctp.thostmduserapi.CThostFtdcDepthMarketDataField;
-import com.sfit.ctp.thostmduserapi.CThostFtdcForQuoteRspField;
-import com.sfit.ctp.thostmduserapi.CThostFtdcMdApi;
-import com.sfit.ctp.thostmduserapi.CThostFtdcReqUserLoginField;
-import com.sfit.ctp.thostmduserapi.CThostFtdcRspInfoField;
-import com.sfit.ctp.thostmduserapi.CThostFtdcRspUserLoginField;
-import com.sfit.ctp.thostmduserapi.CThostFtdcSpecificInstrumentField;
-import com.sfit.ctp.thostmduserapi.CThostFtdcUserLogoutField;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ContractFragment extends Fragment implements IMdSpiEvent {
+public class ContractFragment extends Fragment {
 
-    static {
-        System.loadLibrary("thostmduserapi");
-        System.loadLibrary("thostmduserapi_wrap");
-    }
-
-    private static final String TAG = "Lily";
-    public static CThostFtdcMdApi mdApi;
-    private int iRequestId = 0;
-    private static final String FRONT_ADDRESS = "tcp://180.168.146.187:10010";
-    private static final String BROKER_ID = "9999";
-    private static final String USER_ID = "021131";
-    private static final String PASSWORD = "chen8885257";
+    private static final String PREFERENCES = "future";
 
     private String[] INSTRUMENTS = {"rb1810", "cu1807", "sc1809"};
     private String[] INSTRUMENT_NAMES = {"螺纹1810", "沪铜1807", "原油1809"};
@@ -57,7 +38,10 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
     private ListView mListView;
     private CommonAdapter commonAdapter;
     private SwipeRefreshLayout mSwipeLayout;
-    private int threadCount =0;
+    private LocalBroadcastManager broadcastManager;
+    private BroadcastReceiver mReceiver;
+    public static final String ACTION_UPDATE_UI = "com.kunxun.future.updateUI";
+
 
     @Nullable
     @Override
@@ -65,65 +49,11 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contract, container, false);
 
+        setInstruments(INSTRUMENTS);
         initLayout(view);
-
-        new Thread(mdDataRunnable).start();
 
         return view;
     }
-
-
-    private Runnable mdDataRunnable = new Runnable() {
-        @Override
-        public void run() {
-            Log.i(TAG, Thread.currentThread().getName()+" "+ threadCount);
-            threadCount++;
-            mdRequest();
-        }
-    };
-
-//    private Runnable saveDataRunnable = new Runnable() {
-//        @Override
-//        public void run() {
-//
-//        }
-//    };
-
-
-    @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what){
-                case 0x001:
-                    if(mSwipeLayout.isRefreshing())
-                    {
-                        mSwipeLayout.setRefreshing(false);
-                    }
-                    int position = (int) msg.obj;
-                    updateListViewItem(position);
-                    break;
-
-            }
-        }
-    };
-
-    //region mdRequest
-    private void mdRequest() {
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-
-            String file = getContext().getFilesDir().toString();
-
-            CMdSpi mdSpi = new CMdSpi();
-            mdSpi.setInterface(this);
-
-            mdApi = CThostFtdcMdApi.CreateFtdcMdApi(file);
-            mdApi.RegisterSpi(mdSpi);
-            mdApi.RegisterFront(FRONT_ADDRESS);
-            mdApi.Init();
-        }
-    }
-    //endregion
 
     //region layoutOperation
     private void initLayout(View view) {
@@ -202,7 +132,7 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
             @Override
             public void onRefresh() {
                 Toast.makeText(getContext(), "Refresh", Toast.LENGTH_LONG).show();
-                new Thread(mdDataRunnable).start();
+
             }
         });
     }
@@ -219,94 +149,60 @@ public class ContractFragment extends Fragment implements IMdSpiEvent {
     }
     //endregion
 
-    //region CTP operation
-    public void OnFrontConnected() {
-        CThostFtdcReqUserLoginField loginField = new CThostFtdcReqUserLoginField();
-        loginField.setBrokerID(BROKER_ID);
-        loginField.setUserID(USER_ID);
-        loginField.setPassword(PASSWORD);
-        int iResult = mdApi.ReqUserLogin(loginField, ++iRequestId);
-        Log.i(TAG, "--->发送用户登录请求: " + ((iResult == 0) ? "成功" : "失败"));
-    }
 
-    public void OnFrontDisconnected(int nReason) {
-
-    }
-
-    public void OnHeartBeatWarning(int nTimeLapse) {
-
-    }
-
-
-    public void OnRspUserLogin(CThostFtdcRspUserLoginField pRspUserLogin,
-                               CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-        if (bIsLast && pRspInfo.getErrorID() == 0) {
-            Log.i(TAG, "--->当前交易日:" + pRspUserLogin.getTradingDay());
-
-//            String[] ins = {"rb1810"};
-            int iResult = mdApi.SubscribeMarketData(INSTRUMENTS, INSTRUMENTS.length);
-            Log.i(TAG, "--->>> 发送行情订阅请求: " + ((iResult == 0) ? "成功" : "失败"));
+    private void setInstruments(String [] ins) {
+        SharedPreferences mPrefs = getContext().getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt("InstrumentsCount", ins.length);
+        for (int i = 0; i < ins.length; i++) {
+            editor.putString("Instrument" + String.valueOf(i), ins[i]);
         }
+        editor.commit();
     }
 
-    public void OnRspUserLogout(CThostFtdcUserLogoutField pUserLogout,
-                                CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
 
+//            int position = intent.getIntExtra("position",0);
+//            float lastPrice =intent.getFloatExtra("last_price",0);
+//            float change = intent.getFloatExtra("change",0);
+//            if (!listData.get(position).get("LatestPrice").equals(lastPrice))
+//            {
+//                listData.get(position).remove("LatestPrice");
+//                listData.get(position).put("LatestPrice",String.valueOf(lastPrice));
+//                listData.get(position).remove("Change");
+//                listData.get(position).put("Change",String.valueOf(change));
+//                updateListViewItem(position);
+//            }
+
+
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
 
-    public void OnRspError(CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
+    @Override
+    public void onStart() {
+        super.onStart();
 
-    }
+        Intent intent = new Intent(getContext(), MdService.class);
+        getActivity().startService(intent);
 
-    public void OnRspSubMarketData(CThostFtdcSpecificInstrumentField pSpecificInstrument,
-                                   CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
+        broadcastManager = LocalBroadcastManager.getInstance(getContext());
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("ACTION_UPDATE_UI");
 
-    }
-
-    public void OnRspUnSubMarketData(CThostFtdcSpecificInstrumentField pSpecificInstrument,
-                                     CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-
-    }
-
-    public void OnRspSubForQuoteRsp(CThostFtdcSpecificInstrumentField pSpecificInstrument,
-                                    CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-
-    }
-
-    public void OnRspUnSubForQuoteRsp(CThostFtdcSpecificInstrumentField pSpecificInstrument,
-                                      CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-
-    }
-
-    public void OnRtnDepthMarketData(CThostFtdcDepthMarketDataField pDepthMarketData) {
-        Log.i(TAG,pDepthMarketData.getUpdateTime()+": "+pDepthMarketData.getInstrumentID()+ ", "+ pDepthMarketData.getLastPrice());
-
-        int position;
-        for (int i = 0; i < listData.size(); i++) {
-            if (listData.get(i).get("Name").equals(pDepthMarketData.getInstrumentID())) {
-                position = i;
-                HashMap<String, String> item = listData.get(i);
-                if (!item.get("LatestPrice").equals(String.valueOf(pDepthMarketData.getLastPrice()))) {
-                    item.remove("LatestPrice");
-                    item.put("LatestPrice", String.valueOf(pDepthMarketData.getLastPrice()));
-                    item.remove("Change");
-                    double change = pDepthMarketData.getLastPrice() - pDepthMarketData.getOpenPrice();
-                    change = (Math.round(change*10))/10;
-                    item.put("Change", String.valueOf(change));
-                    listData.set(position, item);
-                    Message msg = Message.obtain();
-                    msg.what = 0x001;
-                    msg.obj = position;
-                    mHandler.sendMessage(msg);
-                }
-                break;
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                System.out.println("broadcast receiver on receive");
             }
-        }
+        };
+
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, filter);
+//        getActivity().registerReceiver(receiver, filter);
+
+
     }
-
-    public void OnRtnForQuoteRsp(CThostFtdcForQuoteRspField pForQuoteRsp) {
-
-    }
-    //endregion
-
 }

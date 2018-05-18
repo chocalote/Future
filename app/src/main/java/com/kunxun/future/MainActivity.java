@@ -2,7 +2,11 @@ package com.kunxun.future;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.os.IBinder;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -11,7 +15,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
+import com.kunxun.future.CTP.MdService;
 import com.kunxun.future.fragment.ContractFragment;
 import com.kunxun.future.fragment.FragmentAdapter;
 import com.kunxun.future.fragment.LoginFragment;
@@ -23,6 +29,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "Lily";
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -36,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         verifyStoragePermissions(this);
-
         initLayout();
+
     }
 
     //region initLayout
@@ -96,4 +104,5 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     //endregion
+
 }
