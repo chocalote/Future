@@ -25,6 +25,7 @@
         </activity>
 
         <service android:name=".CTP.MdService" />
+        <service android:name=".CTP.TraderService" />
 
 
     </application>

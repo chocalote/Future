@@ -99,6 +99,9 @@
                 android:layout_weight="0.48"
                 android:hint="@string/string_account"
                 android:inputType="number"
+                android:completionHint="@string/string_account"
+                android:completionThreshold="1"
+                android:ems="5"
                 android:id="@+id/actvUserId"/>
 
             <CheckBox

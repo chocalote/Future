@@ -1,19 +1,25 @@
 package com.kunxun.future.fragment;
 
-import android.annotation.SuppressLint;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputType;
 import android.text.TextUtils;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -22,53 +28,31 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.kunxun.future.CTP.CTraderSpi;
-import com.kunxun.future.CTP.ITraderSpiEvent;
+import com.kunxun.future.CTP.TraderService;
 import com.kunxun.future.R;
 import com.kunxun.future.Utils.CodeUtils;
-import com.sfit.ctp.thosttraderapi.CThostFtdcInputOrderActionField;
-import com.sfit.ctp.thosttraderapi.CThostFtdcInputOrderField;
-import com.sfit.ctp.thosttraderapi.CThostFtdcInstrumentCommissionRateField;
-import com.sfit.ctp.thosttraderapi.CThostFtdcInstrumentField;
-import com.sfit.ctp.thosttraderapi.CThostFtdcInstrumentMarginRateField;
-import com.sfit.ctp.thosttraderapi.CThostFtdcInvestorPositionField;
-import com.sfit.ctp.thosttraderapi.CThostFtdcOrderField;
-import com.sfit.ctp.thosttraderapi.CThostFtdcReqUserLoginField;
-import com.sfit.ctp.thosttraderapi.CThostFtdcRspInfoField;
-import com.sfit.ctp.thosttraderapi.CThostFtdcRspUserLoginField;
-import com.sfit.ctp.thosttraderapi.CThostFtdcSettlementInfoConfirmField;
-import com.sfit.ctp.thosttraderapi.CThostFtdcTradeField;
-import com.sfit.ctp.thosttraderapi.CThostFtdcTraderApi;
-import com.sfit.ctp.thosttraderapi.CThostFtdcTradingAccountField;
-import com.sfit.ctp.thosttraderapi.CThostFtdcUserLogoutField;
-import com.sfit.ctp.thosttraderapi.THOST_TE_RESUME_TYPE;
 
-public class LoginFragment extends Fragment implements ITraderSpiEvent{
 
-    static {
-        System.loadLibrary("thosttraderapi");
-        System.loadLibrary("thosttraderapi_wrap");
-    }
+public class LoginFragment extends Fragment {
+
 
     private static final String TAG = "Lily";
+    private static final String PREFERENCES = "future";
 
-//    private RadioGroup rgServer;
+    //    private RadioGroup rgServer;
     private ImageView imgValidateCode;
-    private EditText etPassword;
+    private EditText etPassword,etValidateCode;
+    private AutoCompleteTextView actvUserId;
+    private CheckBox ckVisible;
 
-    private CThostFtdcTraderApi traderApi;
-    private int iRequestId = 0;
-    private  String FRONT_ADDRESS = "tcp://180.168.212.76:41205";
-    private static final String BROKER_ID = "8000";
+    private String FRONT_ADDRESS = "tcp://180.168.212.76:41205";
     private String userId, password, validateCode;
+    public static final String ACTION_LOGIN = "com.kunxun.future.login";
 
     private CodeUtils mCodeUtils;
     private Bitmap mBitmap;
 
-    // 会话参数
-    private int	FRONT_ID;	//前置编号 TThostFtdcFrontIDType
-    private int SESSION_ID;	//会话编号 TThostFtdcSessionIDType
-	private String ORDER_REF;	//报单引用 TThostFtdcOrderRefType
+    private TraderBroadcastReceiver mReceiver;
 
     @Nullable
     @Override
@@ -80,9 +64,53 @@ public class LoginFragment extends Fragment implements ITraderSpiEvent{
         return view;
     }
 
-    private void initLayout(View view){
+
+    @Override
+    public void onStart() {
+
+        mReceiver = new TraderBroadcastReceiver();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_LOGIN);
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mReceiver, filter);
+
+        super.onStart();
+    }
+
+    @Override
+    public void onDestroy() {
+
+        getActivity().stopService(new Intent(getActivity(), TraderService.class));
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mReceiver);
+        super.onDestroy();
+    }
+
+    public class TraderBroadcastReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            int iResult = intent.getIntExtra("login_flag",-1);
+            if(iResult == 0) {
+                Log.i(TAG, "Login success");
+
+                CheckBox ckRemember = getView().findViewById(R.id.ckRemember);
+                if(ckRemember.isChecked())
+                {
+                    setUserIdSharedPrefs();
+                }
+
+                FragmentManager fm = getChildFragmentManager();
+                TransactionFragment fragment = new TransactionFragment();
+                fm.beginTransaction().replace(R.id.id_fragment_transaction, fragment).commit();
+            }
+        }
+    }
+
+    //region Layout Operation
+    private void initLayout(View view) {
         RadioGroup rgServer = view.findViewById(R.id.rgServer);
-        if (rgServer.getCheckedRadioButtonId() == R.id.rbServer10010){
+        if (rgServer.getCheckedRadioButtonId() == R.id.rbServer10010) {
             FRONT_ADDRESS = "tcp://27.115.78.155:41205";
         }
 
@@ -93,51 +121,59 @@ public class LoginFragment extends Fragment implements ITraderSpiEvent{
         imgValidateCode.setImageBitmap(mBitmap);
 
         etPassword = view.findViewById(R.id.etPassword);
-        final EditText etValidateCode = view.findViewById(R.id.etValidateCode);
-        final AutoCompleteTextView actvUserId = view.findViewById(R.id.actvUserId);
+        etValidateCode = view.findViewById(R.id.etValidateCode);
 
-        final CheckBox ckVisible = view.findViewById(R.id.ckVisible);
+        actvUserId = view.findViewById(R.id.actvUserId);
+        String[] hints = new String[]{getUserIdSharedPrefs()};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, hints);
+        actvUserId.setAdapter(adapter);
 
-        View.OnClickListener mClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                switch (v.getId()) {
-                    case R.id.imgValidateCode:
-                        Toast.makeText(getContext(), "看不清楚，再来一次", Toast.LENGTH_SHORT).show();
-                        mCodeUtils = CodeUtils.getInstance();
-                        mBitmap = mCodeUtils.createBitmap();
-                        imgValidateCode.setImageBitmap(mBitmap);
-                        break;
-                    case R.id.btnLogin:
-                        userId = actvUserId.getText().toString().trim();
-                        password = etPassword.getText().toString().trim();
-                        validateCode = etValidateCode.getText().toString().trim();
-
-                        if(validateEditText())
-                        {
-                            new Thread(mRunnable).start();
-                        }
-
-                        break;
-                    case R.id.ckVisible:
-                        if (ckVisible.isChecked()) {
-                            etPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                        }
-                        else {
-                            etPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                        }
-                        break;
-
-                }
-            }
-        };
+        ckVisible = view.findViewById(R.id.ckVisible);
 
         btnLogin.setOnClickListener(mClickListener);
         imgValidateCode.setOnClickListener(mClickListener);
         ckVisible.setOnClickListener(mClickListener);
 
     }
+
+    private View.OnClickListener mClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            switch (v.getId()) {
+                case R.id.imgValidateCode:
+                    Toast.makeText(getContext(), "看不清楚，再来一次", Toast.LENGTH_SHORT).show();
+                    mCodeUtils = CodeUtils.getInstance();
+                    mBitmap = mCodeUtils.createBitmap();
+                    imgValidateCode.setImageBitmap(mBitmap);
+                    break;
+
+                case R.id.btnLogin:
+                    userId = actvUserId.getText().toString().trim();
+                    password = etPassword.getText().toString().trim();
+                    validateCode = etValidateCode.getText().toString().trim();
+
+                    if (validateEditText()) {
+                        Intent intent = new Intent(getActivity(), TraderService.class);
+                        intent.putExtra("front_address", FRONT_ADDRESS);
+                        intent.putExtra("user_id", userId);
+                        intent.putExtra("password", password);
+                        getActivity().startService(intent);
+                    }
+
+                    break;
+
+                case R.id.ckVisible:
+                    if (ckVisible.isChecked()) {
+                        etPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    } else {
+                        etPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    }
+                    break;
+
+            }
+        }
+    };
 
     private boolean validateEditText() {
         boolean ret = false;
@@ -155,133 +191,20 @@ public class LoginFragment extends Fragment implements ITraderSpiEvent{
         return ret;
     }
 
-    private Runnable mRunnable = new Runnable() {
-        @Override
-        public void run() {
-            Log.i(TAG, "LoginFragment: "+Thread.currentThread().getName());
-            traderUserLogin();
-        }
-    };
-
-    @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what)
-            {
-                case 0x001:
-                    break;
-                case 0x110:
-                    break;
-
-            }
-        }
-    };
-
-    private void traderUserLogin(){
-
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-
-            String file = getContext().getFilesDir().toString();
-
-            CTraderSpi traderSpi = new CTraderSpi();
-            traderSpi.setInterface(this);
-            traderApi = CThostFtdcTraderApi.CreateFtdcTraderApi(file);
-            traderApi.RegisterSpi(traderSpi);
-            traderApi.RegisterFront(FRONT_ADDRESS);
-            traderApi.SubscribePublicTopic(THOST_TE_RESUME_TYPE.THOST_TERT_RESTART);
-            traderApi.SubscribePrivateTopic(THOST_TE_RESUME_TYPE.THOST_TERT_QUICK);
-            traderApi.Init();
-        }
+    private void setUserIdSharedPrefs()
+    {
+        SharedPreferences mPrefs = getContext().getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString("UserId", userId).commit();
     }
 
-    @Override
-    public void OnFrontConnected() {
-        CThostFtdcReqUserLoginField loginField = new CThostFtdcReqUserLoginField();
-        loginField.setBrokerID(BROKER_ID);
-        loginField.setUserID(userId);
-        loginField.setPassword(password);
-        int iResult = traderApi.ReqUserLogin(loginField, ++iRequestId);
-        Log.i(TAG, "--->发送用户登录请求: " + ((iResult == 0) ? "成功" : "失败"));
-        if (iResult == 0) {
-            CThostFtdcUserLogoutField logoutField = new CThostFtdcUserLogoutField();
-            logoutField.setBrokerID(BROKER_ID);
-            logoutField.setUserID(userId);
-            traderApi.ReqUserLogout(logoutField,--iResult);
-            mHandler.sendEmptyMessage(0x001);
-        }
-        else {
-            mHandler.sendEmptyMessage(0x110);
-        }
+    private String getUserIdSharedPrefs()
+    {
+        SharedPreferences mPrefs = getContext().getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
+        return mPrefs.getString("UserId", "");
     }
 
-    @Override
-    public void OnRspUserLogin(CThostFtdcRspUserLoginField pRspUserLogin, CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
 
-    }
+    //endregion
 
-    @Override
-    public void OnRspSettlementInfoConfirm(CThostFtdcSettlementInfoConfirmField pSettlementInfoConfirm, CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-
-    }
-
-    @Override
-    public void OnRspQryInstrument(CThostFtdcInstrumentField pInstrument, CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-
-    }
-
-    @Override
-    public void OnRspQryTradingAccount(CThostFtdcTradingAccountField pTradingAccount, CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-
-    }
-
-    @Override
-    public void OnRspQryInvestorPosition(CThostFtdcInvestorPositionField pInvestorPosition, CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-
-    }
-
-    @Override
-    public void OnRspOrderInsert(CThostFtdcInputOrderField pInputOrder, CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-
-    }
-
-    @Override
-    public void OnRspOrderAction(CThostFtdcInputOrderActionField pInputOrderAction, CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-
-    }
-
-    @Override
-    public void OnRspError(CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-
-    }
-
-    @Override
-    public void OnFrontDisconnected(int nReason) {
-
-    }
-
-    @Override
-    public void OnHeartBeatWarning(int nTimeLapse) {
-
-    }
-
-    @Override
-    public void OnRtnOrder(CThostFtdcOrderField pOrder) {
-
-    }
-
-    @Override
-    public void OnRtnTrade(CThostFtdcTradeField pTrade) {
-
-    }
-
-    @Override
-    public void OnRspQryInstrumentMarginRate(CThostFtdcInstrumentMarginRateField pInstrumentMarginRate, CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-
-    }
-
-    @Override
-    public void OnRspQryInstrumentCommissionRate(CThostFtdcInstrumentCommissionRateField pInstrumentCommissionRate, CThostFtdcRspInfoField pRspInfo, int nRequestID, boolean bIsLast) {
-
-    }
 }

@@ -9,8 +9,6 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-
-
 import com.kunxun.future.fragment.ContractFragment;
 import com.sfit.ctp.thostmduserapi.CThostFtdcDepthMarketDataField;
 import com.sfit.ctp.thostmduserapi.CThostFtdcForQuoteRspField;
@@ -41,33 +39,17 @@ public class MdService extends Service implements IMdSpiEvent{
 
     @Override
     public void onCreate() {
-        android.os.Debug.waitForDebugger();
+//        android.os.Debug.waitForDebugger();
         initMdRequest();
         super.onCreate();
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        return super.onUnbind(intent);
-    }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
-
 
 
     private void initMdRequest()
@@ -175,16 +157,16 @@ public class MdService extends Service implements IMdSpiEvent{
 
     @Override
     public void OnRtnDepthMarketData(CThostFtdcDepthMarketDataField pDepthMarketData) {
-//        Log.i(TAG, "--->>>" + pDepthMarketData.getUpdateTime() + ": " + pDepthMarketData.getInstrumentID() + " " + pDepthMarketData.getLastPrice());
+        Log.i(TAG, "--->>>" + pDepthMarketData.getUpdateTime() + ": " + pDepthMarketData.getInstrumentID() + " " + pDepthMarketData.getLastPrice());
 
         Intent intent = new Intent();
         intent.setAction(ContractFragment.ACTION_UPDATE_UI);
 
-//        intent.putExtra("position", getPosition(pDepthMarketData.getInstrumentID()));
-//        intent.putExtra("last_price", pDepthMarketData.getLastPrice());
-//        intent.putExtra("change", pDepthMarketData.getLastPrice() - pDepthMarketData.getOpenPrice());
+        intent.putExtra("position", getPosition(pDepthMarketData.getInstrumentID()));
+        intent.putExtra("last_price", pDepthMarketData.getLastPrice());
+        intent.putExtra("change", pDepthMarketData.getLastPrice() - pDepthMarketData.getOpenPrice());
 
-        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(MdService.this).sendBroadcast(intent);
     }
 
     @Override

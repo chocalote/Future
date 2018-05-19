@@ -18,7 +18,6 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.kunxun.future.CTP.MdService;
 import com.kunxun.future.R;
 import com.kunxun.future.adapter.CommonAdapter;
@@ -38,10 +37,36 @@ public class ContractFragment extends Fragment {
     private ListView mListView;
     private CommonAdapter commonAdapter;
     private SwipeRefreshLayout mSwipeLayout;
-    private LocalBroadcastManager broadcastManager;
-    private BroadcastReceiver mReceiver;
+
+    private MdBroadcastReceiver mReceiver;
     public static final String ACTION_UPDATE_UI = "com.kunxun.future.updateUI";
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Intent intent = new Intent(getActivity(), MdService.class);
+        getActivity().startService(intent);
+    }
+
+    @Override
+    public void onStart() {
+        mReceiver = new MdBroadcastReceiver();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_UPDATE_UI);
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mReceiver, filter);
+
+        super.onStart();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().stopService(new Intent(getActivity(), MdService.class));
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mReceiver);
+    }
 
     @Nullable
     @Override
@@ -54,6 +79,25 @@ public class ContractFragment extends Fragment {
 
         return view;
     }
+
+    public class MdBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("Lily", "onReceive");
+
+            int position = intent.getIntExtra("position", 0);
+            double lastPrice = intent.getDoubleExtra("last_price", 0);
+            double change = intent.getDoubleExtra("change", 0);
+            if (!listData.get(position).get("LatestPrice").equals(String.valueOf(lastPrice))) {
+                listData.get(position).remove("LatestPrice");
+                listData.get(position).put("LatestPrice", String.valueOf(lastPrice));
+                listData.get(position).remove("Change");
+                listData.get(position).put("Change", String.valueOf(change));
+                updateListViewItem(position);
+            }
+        }
+    }
+
 
     //region layoutOperation
     private void initLayout(View view) {
@@ -131,8 +175,15 @@ public class ContractFragment extends Fragment {
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Toast.makeText(getContext(), "Refresh", Toast.LENGTH_LONG).show();
 
+                Intent intent = new Intent(getActivity(), MdService.class);
+                getActivity().stopService(intent);
+
+                getActivity().startService(intent);
+
+                if (mSwipeLayout.isRefreshing()) {
+                    mSwipeLayout.setRefreshing(false);
+                }
             }
         });
     }
@@ -147,62 +198,21 @@ public class ContractFragment extends Fragment {
             commonAdapter.getView(position, view, mListView);
         }
     }
-    //endregion
 
-
-    private void setInstruments(String [] ins) {
+    private void setInstruments(String[] ins) {
         SharedPreferences mPrefs = getContext().getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt("InstrumentsCount", ins.length);
         for (int i = 0; i < ins.length; i++) {
             editor.putString("Instrument" + String.valueOf(i), ins[i]);
         }
-        editor.commit();
+        editor.apply();
     }
-
-
-//            int position = intent.getIntExtra("position",0);
-//            float lastPrice =intent.getFloatExtra("last_price",0);
-//            float change = intent.getFloatExtra("change",0);
-//            if (!listData.get(position).get("LatestPrice").equals(lastPrice))
-//            {
-//                listData.get(position).remove("LatestPrice");
-//                listData.get(position).put("LatestPrice",String.valueOf(lastPrice));
-//                listData.get(position).remove("Change");
-//                listData.get(position).put("Change",String.valueOf(change));
-//                updateListViewItem(position);
-//            }
+    //endregion
 
 
 
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        Intent intent = new Intent(getContext(), MdService.class);
-        getActivity().startService(intent);
-
-        broadcastManager = LocalBroadcastManager.getInstance(getContext());
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("ACTION_UPDATE_UI");
-
-        mReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                System.out.println("broadcast receiver on receive");
-            }
-        };
-
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, filter);
-//        getActivity().registerReceiver(receiver, filter);
 
 
-    }
 }
