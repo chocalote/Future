@@ -1,4 +1,4 @@
-package com.kunxun.future.CTP;
+package com.kunxun.future.ctp;
 
 import com.sfit.ctp.thosttraderapi.CThostFtdcInputOrderActionField;
 import com.sfit.ctp.thosttraderapi.CThostFtdcInputOrderField;

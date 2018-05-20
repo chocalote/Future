@@ -1,4 +1,4 @@
-package com.kunxun.future.CTP;
+package com.kunxun.future.ctp;
 
 import android.app.Service;
 import android.content.Context;

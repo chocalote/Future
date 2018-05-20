@@ -18,7 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.kunxun.future.CTP.MdService;
+import com.kunxun.future.ctp.MdService;
 import com.kunxun.future.R;
 import com.kunxun.future.adapter.CommonAdapter;
 import com.kunxun.future.adapter.CommonViewHolder;

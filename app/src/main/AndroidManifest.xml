@@ -24,9 +24,12 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".CTP.MdService" />
-        <service android:name=".CTP.TraderService" />
+        <service android:name=".ctp.MdService" />
+        <service android:name=".ctp.TraderService" />
 
+        <provider
+            android:authorities="com.kunxun.future"
+            android:name=".database.FutureProvider" />
 
     </application>
 
