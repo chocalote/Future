@@ -169,13 +169,14 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.3"
                 android:text="@string/string_validate_code" />
+
             <EditText
+                android:id="@+id/etValidateCode"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:hint="@string/string_validate_code"
-                android:inputType="text"
                 android:layout_weight="0.48"
-                android:id="@+id/etValidateCode"/>
+                android:hint="@string/string_validate_code"
+                android:inputType="text|number" />
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

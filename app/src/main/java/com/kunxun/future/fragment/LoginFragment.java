@@ -10,11 +10,9 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputType;
 import android.text.TextUtils;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -100,9 +98,9 @@ public class LoginFragment extends Fragment {
                     setUserIdSharedPrefs();
                 }
 
-                FragmentManager fm = getChildFragmentManager();
-                TransactionFragment fragment = new TransactionFragment();
-                fm.beginTransaction().replace(R.id.id_fragment_transaction, fragment).commit();
+//                FragmentManager fm = getFragmentManager();
+//                TransactionFragment fragment = new TransactionFragment();
+//                fm.beginTransaction().replace(R.id.id_fragment, fragment).commit();
             }
         }
     }

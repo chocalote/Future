@@ -29,7 +29,8 @@
 
         <provider
             android:authorities="com.kunxun.future"
-            android:name=".database.FutureProvider" />
+            android:name=".database.FutureProvider"
+            android:exported="false"/>
 
     </application>
 

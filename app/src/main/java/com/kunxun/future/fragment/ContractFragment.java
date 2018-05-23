@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -22,6 +23,8 @@ import com.kunxun.future.ctp.MdService;
 import com.kunxun.future.R;
 import com.kunxun.future.adapter.CommonAdapter;
 import com.kunxun.future.adapter.CommonViewHolder;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,7 +86,7 @@ public class ContractFragment extends Fragment {
     public class MdBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("Lily", "onReceive");
+//            Log.i("Lily", "onReceive");
 
             int position = intent.getIntExtra("position", 0);
             double lastPrice = intent.getDoubleExtra("last_price", 0);
@@ -118,9 +121,9 @@ public class ContractFragment extends Fragment {
             @Override
             protected void convertView(View item, HashMap<String, String> map) {
 
-                float change = 0;
+                double change = 0;
                 if (!map.get("Change").equals("--")) {
-                    change = Float.parseFloat(map.get("Change"));
+                    change = Double.parseDouble(map.get("Change"));
                 }
 
                 TextView tvName = CommonViewHolder.get(item, R.id.contractName);
@@ -134,7 +137,7 @@ public class ContractFragment extends Fragment {
                 tvLatestPrice.setText(map.get("LatestPrice"));
 
                 TextView tvChange = CommonViewHolder.get(item, R.id.contractChange);
-                tvChange.setText(map.get("Change"));
+                tvChange.setText(new DecimalFormat("0.0").format(change));
 
                 if (change < 0) {
                     tvLatestPrice.setTextColor(getResources().getColor(R.color.colorAccent));
@@ -149,6 +152,13 @@ public class ContractFragment extends Fragment {
         };
 
         mListView.setAdapter(commonAdapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
+
 
         TextView tv_Edit = view.findViewById(R.id.tvEdit);
         tv_Edit.setOnClickListener(new View.OnClickListener() {

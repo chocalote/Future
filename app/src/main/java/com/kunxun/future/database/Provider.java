@@ -18,6 +18,7 @@ public class Provider {
         public static final String TABLE_NAME = "MinuteData";
         public static final String DEFAULT_SORT_ORDER = "TradingDay, UpdateTime asc";
 
+
         public static final String INSTRUMENT_ID = "InstrumentId";
         public static final String TRADING_DAY = "TradingDay";
         public static final String UPDATE_TIME = "UpdateTime";
@@ -25,6 +26,10 @@ public class Provider {
         public static final String CLOSE_PRICE = "ClosePrice";
         public static final String MACD = "MACD";
         public static final String TARGET_PRICE = "TargetPrice";
+
+        public static final String[] DEFAULT_QUERY_COLUMNS = {INSTRUMENT_ID, TRADING_DAY,
+                UPDATE_TIME, OPEN_PRICE, CLOSE_PRICE, MACD, TARGET_PRICE};
+
     }
 
     public static final class Minutes5DataColumns implements BaseColumns {
@@ -41,6 +46,9 @@ public class Provider {
         public static final String CLOSE_PRICE = "ClosePrice";
         public static final String M20VALUE = "M20Value";
         public static final String TENDENCY = "Tendency";
+
+        public static final String[] DEFAULT_QUERY_COLUMNS = {INSTRUMENT_ID, TRADING_DAY,
+                UPDATE_TIME, OPEN_PRICE, CLOSE_PRICE, M20VALUE, TENDENCY};
     }
 
     public static final class HourDataColumns implements BaseColumns {
@@ -57,6 +65,9 @@ public class Provider {
         public static final String CLOSE_PRICE = "ClosePrice";
         public static final String M20VALUE = "M20Value";
         public static final String TENDENCY = "Tendency";
+
+        public static final String[] DEFAULT_QUERY_COLUMNS = {INSTRUMENT_ID, TRADING_DAY,
+                UPDATE_TIME, OPEN_PRICE, CLOSE_PRICE, M20VALUE, TENDENCY};
     }
 
     public static final class DayDataColumns implements BaseColumns {
@@ -73,5 +84,8 @@ public class Provider {
         public static final String CLOSE_PRICE = "ClosePrice";
         public static final String M20VALUE = "M20Value";
         public static final String TENDENCY = "Tendency";
+
+        public static final String[] DEFAULT_QUERY_COLUMNS = {INSTRUMENT_ID, TRADING_DAY,
+                UPDATE_TIME, OPEN_PRICE, CLOSE_PRICE, M20VALUE, TENDENCY};
     }
 }
