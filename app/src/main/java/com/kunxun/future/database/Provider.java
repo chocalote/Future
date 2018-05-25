@@ -24,11 +24,15 @@ public class Provider {
         public static final String UPDATE_TIME = "UpdateTime";
         public static final String OPEN_PRICE = "OpenPrice";
         public static final String CLOSE_PRICE = "ClosePrice";
-        public static final String MACD = "MACD";
+        public static final String HIGH_PRICE = "HighPrice";
+        public static final String LOW_PRICE = "LowPrice";
+        public static final String MACD_DIFF = "MACD_Diff";
+        public static final String MACD_DEA = "MACD_Dea";
+        public static final String MACD_VALUE = "MACD_Value";
         public static final String TARGET_PRICE = "TargetPrice";
 
         public static final String[] DEFAULT_QUERY_COLUMNS = {INSTRUMENT_ID, TRADING_DAY,
-                UPDATE_TIME, OPEN_PRICE, CLOSE_PRICE, MACD, TARGET_PRICE};
+                UPDATE_TIME, OPEN_PRICE, CLOSE_PRICE, HIGH_PRICE, LOW_PRICE, MACD_DIFF, MACD_DEA, MACD_VALUE, TARGET_PRICE};
 
     }
 
@@ -44,11 +48,13 @@ public class Provider {
         public static final String UPDATE_TIME = "UpdateTime";
         public static final String OPEN_PRICE = "OpenPrice";
         public static final String CLOSE_PRICE = "ClosePrice";
+        public static final String HIGH_PRICE = "HighPrice";
+        public static final String LOW_PRICE = "LowPrice";
         public static final String M20VALUE = "M20Value";
         public static final String TENDENCY = "Tendency";
 
         public static final String[] DEFAULT_QUERY_COLUMNS = {INSTRUMENT_ID, TRADING_DAY,
-                UPDATE_TIME, OPEN_PRICE, CLOSE_PRICE, M20VALUE, TENDENCY};
+                UPDATE_TIME, OPEN_PRICE, CLOSE_PRICE, HIGH_PRICE, LOW_PRICE, M20VALUE, TENDENCY};
     }
 
     public static final class HourDataColumns implements BaseColumns {
@@ -63,11 +69,13 @@ public class Provider {
         public static final String UPDATE_TIME = "UpdateTime";
         public static final String OPEN_PRICE = "OpenPrice";
         public static final String CLOSE_PRICE = "ClosePrice";
+        public static final String HIGH_PRICE = "HighPrice";
+        public static final String LOW_PRICE = "LowPrice";
         public static final String M20VALUE = "M20Value";
         public static final String TENDENCY = "Tendency";
 
         public static final String[] DEFAULT_QUERY_COLUMNS = {INSTRUMENT_ID, TRADING_DAY,
-                UPDATE_TIME, OPEN_PRICE, CLOSE_PRICE, M20VALUE, TENDENCY};
+                UPDATE_TIME, OPEN_PRICE, CLOSE_PRICE, HIGH_PRICE, LOW_PRICE, M20VALUE, TENDENCY};
     }
 
     public static final class DayDataColumns implements BaseColumns {
@@ -82,10 +90,12 @@ public class Provider {
         public static final String UPDATE_TIME = "UpdateTime";
         public static final String OPEN_PRICE = "OpenPrice";
         public static final String CLOSE_PRICE = "ClosePrice";
+        public static final String HIGH_PRICE = "HighPrice";
+        public static final String LOW_PRICE = "LowPrice";
         public static final String M20VALUE = "M20Value";
         public static final String TENDENCY = "Tendency";
 
         public static final String[] DEFAULT_QUERY_COLUMNS = {INSTRUMENT_ID, TRADING_DAY,
-                UPDATE_TIME, OPEN_PRICE, CLOSE_PRICE, M20VALUE, TENDENCY};
+                UPDATE_TIME, OPEN_PRICE, CLOSE_PRICE, HIGH_PRICE, LOW_PRICE, M20VALUE, TENDENCY};
     }
 }

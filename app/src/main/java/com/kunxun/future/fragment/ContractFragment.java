@@ -19,6 +19,9 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.kunxun.future.InstrumentActivity;
+import com.kunxun.future.ctp.CDepthMarketData;
 import com.kunxun.future.ctp.MdService;
 import com.kunxun.future.R;
 import com.kunxun.future.adapter.CommonAdapter;
@@ -67,6 +70,7 @@ public class ContractFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.i("Lily", "contractFragment onDestroy");
         getActivity().stopService(new Intent(getActivity(), MdService.class));
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mReceiver);
     }
@@ -88,17 +92,30 @@ public class ContractFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
 //            Log.i("Lily", "onReceive");
 
-            int position = intent.getIntExtra("position", 0);
-            double lastPrice = intent.getDoubleExtra("last_price", 0);
-            double change = intent.getDoubleExtra("change", 0);
-            if (!listData.get(position).get("LatestPrice").equals(String.valueOf(lastPrice))) {
+            CDepthMarketData data = (CDepthMarketData)intent.getSerializableExtra("DepthMarketData");
+
+            int position = getPosition(data.instrumentId);
+
+            if (!listData.get(position).get("LatestPrice").equals(String.valueOf(data.lastPrice))) {
                 listData.get(position).remove("LatestPrice");
-                listData.get(position).put("LatestPrice", String.valueOf(lastPrice));
+                listData.get(position).put("LatestPrice", String.valueOf(data.lastPrice));
                 listData.get(position).remove("Change");
-                listData.get(position).put("Change", String.valueOf(change));
+                listData.get(position).put("Change", String.valueOf(data.lastPrice-data.openPrice));
                 updateListViewItem(position);
             }
         }
+    }
+
+    private int getPosition(String ins){
+        int ret = 0;
+        for (int i=0;i<INSTRUMENTS.length;i++)
+        {
+            if (INSTRUMENTS[i].equals(ins)) {
+                ret = i;
+                break;
+            }
+        }
+        return ret;
     }
 
 
@@ -117,6 +134,7 @@ public class ContractFragment extends Fragment {
             listData.add(item);
         }
 
+        //region CommonAdapter convertView
         commonAdapter = new CommonAdapter<HashMap<String, String>>(getContext(), listData, R.layout.listitem_contract) {
             @Override
             protected void convertView(View item, HashMap<String, String> map) {
@@ -124,6 +142,11 @@ public class ContractFragment extends Fragment {
                 double change = 0;
                 if (!map.get("Change").equals("--")) {
                     change = Double.parseDouble(map.get("Change"));
+
+                    double lastPrice = Double.parseDouble(map.get("LatestPrice"));
+                    if (change > lastPrice * 0.5 || change < -lastPrice * 0.5) {
+                        change = 0;
+                    }
                 }
 
                 TextView tvName = CommonViewHolder.get(item, R.id.contractName);
@@ -150,12 +173,16 @@ public class ContractFragment extends Fragment {
                 }
             }
         };
+        //endregion
 
         mListView.setAdapter(commonAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                Intent intent = new Intent(getActivity(), InstrumentActivity.class);
+                intent.putExtra("Instrument", listData.get(position).get("Name") + ", " + listData.get(position).get("SubName"));
+                startActivity(intent);
             }
         });
 
@@ -219,10 +246,6 @@ public class ContractFragment extends Fragment {
         editor.apply();
     }
     //endregion
-
-
-
-
 
 
 }

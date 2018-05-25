@@ -10,14 +10,12 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
-import android.database.sqlite.SQLiteStatement;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 
@@ -215,66 +213,66 @@ public class FutureProvider extends ContentProvider {
         throw new SQLException("Failed to insert row into " + uri);
     }
 
-    public boolean insertList(List<MinuteData> list){
-
-        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        if (list == null || list.size() == 0)
-        {
-            return false;
-        }
-
-        try {
-            String sql = "INSERT INTO " + Provider.MinuteDataColumns.TABLE_NAME + "("
-                    +Provider.MinuteDataColumns.INSTRUMENT_ID +", "
-                    +Provider.MinuteDataColumns.TRADING_DAY+", "
-                    +Provider.MinuteDataColumns.UPDATE_TIME +", "
-                    +Provider.MinuteDataColumns.OPEN_PRICE +", "
-                    +Provider.MinuteDataColumns.CLOSE_PRICE +", "
-                    +Provider.MinuteDataColumns.MACD+", "
-                    +Provider.MinuteDataColumns.TARGET_PRICE
-                    +") "
-                    +"VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-            //预编译Sql语句避免重复解析Sql语句
-            SQLiteStatement stat = db.compileStatement(sql);
-            //开启事务
-            db.beginTransaction();
-            for (MinuteData data : list) {
-                stat.bindString(1, data.instrumentId);
-                stat.bindString(2, data.tradingDay);
-                stat.bindString(3, data.updateTime);
-                stat.bindDouble(4, data.openPrice);
-                stat.bindDouble(5, data.closePrice);
-                stat.bindDouble(6, data.macd);
-                stat.bindDouble(7, data.targetPrice);
-                long result = stat.executeInsert();
-                if (result < 0) {
-                    return false;
-                }
-            }
-            //控制回滚，如果不设置此项自动回滚
-            db.setTransactionSuccessful();
-
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return false;
-        }
-        finally {
-            try {
-                if (null != db) {
-                    //事务提交
-                    db.endTransaction();
-                    db.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        return true;
-    }
+//    public boolean insertList(List<MinuteData> list){
+//
+//        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+//        if (list == null || list.size() == 0)
+//        {
+//            return false;
+//        }
+//
+//        try {
+//            String sql = "INSERT INTO " + Provider.MinuteDataColumns.TABLE_NAME + "("
+//                    +Provider.MinuteDataColumns.INSTRUMENT_ID +", "
+//                    +Provider.MinuteDataColumns.TRADING_DAY+", "
+//                    +Provider.MinuteDataColumns.UPDATE_TIME +", "
+//                    +Provider.MinuteDataColumns.OPEN_PRICE +", "
+//                    +Provider.MinuteDataColumns.CLOSE_PRICE +", "
+//                    +Provider.MinuteDataColumns.MACD_DIFF +", "
+//                    +Provider.MinuteDataColumns.TARGET_PRICE
+//                    +") "
+//                    +"VALUES (?, ?, ?, ?, ?, ?, ?)";
+//
+//            //预编译Sql语句避免重复解析Sql语句
+//            SQLiteStatement stat = db.compileStatement(sql);
+//            //开启事务
+//            db.beginTransaction();
+//            for (MinuteData data : list) {
+//                stat.bindString(1, data.instrumentId);
+//                stat.bindString(2, data.tradingDay);
+//                stat.bindString(3, data.updateTime);
+//                stat.bindDouble(4, data.openPrice);
+//                stat.bindDouble(5, data.closePrice);
+//                stat.bindDouble(6, data.macdDiff);
+//                stat.bindDouble(7, data.targetPrice);
+//                long result = stat.executeInsert();
+//                if (result < 0) {
+//                    return false;
+//                }
+//            }
+//            //控制回滚，如果不设置此项自动回滚
+//            db.setTransactionSuccessful();
+//
+//        }
+//        catch (Exception e)
+//        {
+//            e.printStackTrace();
+//            return false;
+//        }
+//        finally {
+//            try {
+//                if (null != db) {
+//                    //事务提交
+//                    db.endTransaction();
+//                    db.close();
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        return true;
+//    }
     //endregion
 
     //region delete
@@ -314,7 +312,7 @@ public class FutureProvider extends ContentProvider {
         projectionMap.put("m" + Provider.MinuteDataColumns.UPDATE_TIME, Provider.MinuteDataColumns.UPDATE_TIME);
         projectionMap.put("m" + Provider.MinuteDataColumns.OPEN_PRICE, Provider.MinuteDataColumns.OPEN_PRICE);
         projectionMap.put("m" + Provider.MinuteDataColumns.CLOSE_PRICE, Provider.MinuteDataColumns.CLOSE_PRICE);
-        projectionMap.put("m" + Provider.MinuteDataColumns.MACD, Provider.MinuteDataColumns.MACD);
+        projectionMap.put("m" + Provider.MinuteDataColumns.MACD_DIFF, Provider.MinuteDataColumns.MACD_DIFF);
         projectionMap.put("m" + Provider.MinuteDataColumns.TARGET_PRICE, Provider.MinuteDataColumns.TARGET_PRICE);
 
         projectionMap.put("ms" + Provider.Minutes5DataColumns._ID, Provider.Minutes5DataColumns._ID);

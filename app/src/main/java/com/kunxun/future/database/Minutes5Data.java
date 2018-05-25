@@ -8,6 +8,8 @@ public class Minutes5Data {
     public String updateTime;
     public double openPrice;
     public double closePrice;
+    public double highPrice;
+    public double lowPrice;
     public double m20Value;
     public int tendency;
 

@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.kunxun.future.TransactionActivity;
 import com.kunxun.future.ctp.TraderService;
 import com.kunxun.future.R;
 import com.kunxun.future.Utils.CodeUtils;
@@ -39,7 +40,7 @@ public class LoginFragment extends Fragment {
 
     //    private RadioGroup rgServer;
     private ImageView imgValidateCode;
-    private EditText etPassword,etValidateCode;
+    private EditText etPassword, etValidateCode;
     private AutoCompleteTextView actvUserId;
     private CheckBox ckVisible;
 
@@ -84,19 +85,20 @@ public class LoginFragment extends Fragment {
         super.onDestroy();
     }
 
-    public class TraderBroadcastReceiver extends BroadcastReceiver{
+    public class TraderBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            int iResult = intent.getIntExtra("login_flag",-1);
-            if(iResult == 0) {
+            int iResult = intent.getIntExtra("login_flag", -1);
+            if (iResult == 0) {
                 Log.i(TAG, "Login success");
 
                 CheckBox ckRemember = getView().findViewById(R.id.ckRemember);
-                if(ckRemember.isChecked())
-                {
+                if (ckRemember.isChecked()) {
                     setUserIdSharedPrefs();
                 }
+
+                startActivity(new Intent(getActivity(), TransactionActivity.class));
 
 //                FragmentManager fm = getFragmentManager();
 //                TransactionFragment fragment = new TransactionFragment();
@@ -165,7 +167,7 @@ public class LoginFragment extends Fragment {
                     if (ckVisible.isChecked()) {
                         etPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
                     } else {
-                        etPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        etPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT);
                     }
                     break;
 
@@ -189,15 +191,13 @@ public class LoginFragment extends Fragment {
         return ret;
     }
 
-    private void setUserIdSharedPrefs()
-    {
+    private void setUserIdSharedPrefs() {
         SharedPreferences mPrefs = getContext().getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString("UserId", userId).commit();
     }
 
-    private String getUserIdSharedPrefs()
-    {
+    private String getUserIdSharedPrefs() {
         SharedPreferences mPrefs = getContext().getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
         return mPrefs.getString("UserId", "");
     }

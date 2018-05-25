@@ -23,7 +23,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + Provider.MinuteDataColumns.UPDATE_TIME + " TEXT, "
                 + Provider.MinuteDataColumns.OPEN_PRICE + " NUMERIC, "
                 + Provider.MinuteDataColumns.CLOSE_PRICE + " NUMERIC, "
-                + Provider.MinuteDataColumns.MACD + " NUMERIC, "
+                + Provider.MinuteDataColumns.HIGH_PRICE + " NUMERIC, "
+                + Provider.MinuteDataColumns.LOW_PRICE + " NUMERIC, "
+                + Provider.MinuteDataColumns.MACD_DIFF + " NUMERIC, "
+                + Provider.MinuteDataColumns.MACD_DEA + " NUMERIC, "
+                + Provider.MinuteDataColumns.MACD_VALUE + " NUMERIC, "
                 + Provider.MinuteDataColumns.TARGET_PRICE + " NUMERIC "
                 + "); ");
 
@@ -34,6 +38,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + Provider.Minutes5DataColumns.UPDATE_TIME + " TEXT, "
                 + Provider.Minutes5DataColumns.OPEN_PRICE + " NUMERIC, "
                 + Provider.Minutes5DataColumns.CLOSE_PRICE + " NUMERIC, "
+                + Provider.Minutes5DataColumns.HIGH_PRICE + " NUMERIC, "
+                + Provider.Minutes5DataColumns.LOW_PRICE + " NUMERIC, "
                 + Provider.Minutes5DataColumns.M20VALUE + " NUMERIC, "
                 + Provider.Minutes5DataColumns.TENDENCY + " TEXT "
                 + "); ");
@@ -45,6 +51,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + Provider.HourDataColumns.UPDATE_TIME + " TEXT, "
                 + Provider.HourDataColumns.OPEN_PRICE + " NUMERIC, "
                 + Provider.HourDataColumns.CLOSE_PRICE + " NUMERIC, "
+                + Provider.HourDataColumns.HIGH_PRICE + " NUMERIC, "
+                + Provider.HourDataColumns.LOW_PRICE + " NUMERIC, "
                 + Provider.HourDataColumns.M20VALUE + " NUMERIC, "
                 + Provider.HourDataColumns.TENDENCY + " TEXT "
                 + "); ");
@@ -56,6 +64,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + Provider.DayDataColumns.UPDATE_TIME + " TEXT, "
                 + Provider.DayDataColumns.OPEN_PRICE + " NUMERIC, "
                 + Provider.DayDataColumns.CLOSE_PRICE + " NUMERIC, "
+                + Provider.DayDataColumns.HIGH_PRICE + " NUMERIC, "
+                + Provider.DayDataColumns.LOW_PRICE + " NUMERIC, "
                 + Provider.DayDataColumns.M20VALUE + " NUMERIC, "
                 + Provider.DayDataColumns.TENDENCY + " TEXT "
                 + "); ");
