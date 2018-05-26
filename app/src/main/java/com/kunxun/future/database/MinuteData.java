@@ -13,12 +13,23 @@ public class MinuteData {
     public Macd macd;
     public double targetPrice;
 
-    public class Macd
-    {
+    public class Macd {
         public double diff;
         public double dea;
         public double value;
     }
 
-
+    public MinuteData() {
+        instrumentId = "";
+        tradingDay = "";
+        updateTime = "";
+        openPrice = 0;
+        closePrice = 0;
+        highPrice = 0;
+        lowPrice = 0;
+        targetPrice = 0;
+        macd.diff = 0;
+        macd.dea = 0;
+        macd.value = 0;
+    }
 }

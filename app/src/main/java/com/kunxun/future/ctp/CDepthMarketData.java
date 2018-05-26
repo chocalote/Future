@@ -26,6 +26,7 @@ public class CDepthMarketData implements Serializable {
     public int iUpdateTime;
     public int iUpdateMilliSec;
 
+
     public CDepthMarketData(CThostFtdcDepthMarketDataField dataField) {
 
         instrumentId = dataField.getInstrumentID();
@@ -52,5 +53,6 @@ public class CDepthMarketData implements Serializable {
                 + Integer.parseInt(updateTime.substring(3, 4)) * 60
                 + Integer.parseInt(updateTime.substring(6, 7));
         iUpdateMilliSec = dataField.getUpdateMillisec() + 1000 * iUpdateTime;
+
     }
 }
