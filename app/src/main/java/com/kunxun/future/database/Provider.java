@@ -5,7 +5,7 @@ import android.provider.BaseColumns;
 
 public class Provider {
 
-    public static final String AUTHORITY = "com.kunxun.future.Database";
+    public static final String AUTHORITY = "com.kunxun.future";
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.kunxun.future";
 
     public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.kunxun.future";

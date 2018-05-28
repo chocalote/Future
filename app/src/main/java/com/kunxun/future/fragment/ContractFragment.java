@@ -36,8 +36,8 @@ public class ContractFragment extends Fragment {
 
     private static final String PREFERENCES = "future";
 
-    private String[] INSTRUMENTS = {"rb1810", "cu1807", "sc1809"};
-    private String[] INSTRUMENT_NAMES = {"螺纹1810", "沪铜1807", "原油1809"};
+    private String[] INSTRUMENTS = {"rb1810" };//, "cu1807", "sc1809"};
+    private String[] INSTRUMENT_NAMES = {"螺纹1810"};//, "沪铜1807", "原油1809"};
     private List<HashMap<String, String>> listData = new ArrayList<>();
 
     private ListView mListView;

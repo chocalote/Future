@@ -11,7 +11,6 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
-import android.print.PrinterId;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -57,14 +56,16 @@ public class MdService extends Service implements IMdSpiEvent {
     private DayData dayData;
     private List<List<Double>> closePriceList = new ArrayList<>();
 
-    private int iPreMinute = 0;
 
     @Override
     public void onCreate() {
 //        android.os.Debug.waitForDebugger();
         INSTRUMENTS = getInstruments();
-        for (int i = 0; i < INSTRUMENTS.length; i++) {
-            closePriceList.add(null);
+        int i = 0;
+        while (i < INSTRUMENTS.length) {
+            List<Double> list = new ArrayList<>();
+            closePriceList.add(list);
+            i++;
         }
         initMdRequest();
         super.onCreate();
@@ -155,7 +156,7 @@ public class MdService extends Service implements IMdSpiEvent {
 
 
             int iResult = mdApi.SubscribeMarketData(INSTRUMENTS, INSTRUMENTS.length);
-            Log.i(TAG, "--->>> 发送行情订阅请求: " + ((iResult == 0) ? "成功" : "失败"));
+            Log.i(TAG, "--->发送行情订阅请求: " + ((iResult == 0) ? "成功" : "失败"));
         }
     }
 
@@ -191,8 +192,8 @@ public class MdService extends Service implements IMdSpiEvent {
 
     @Override
     public void OnRtnDepthMarketData(CThostFtdcDepthMarketDataField pDepthMarketData) {
-        Log.i(TAG, "--->>>" + pDepthMarketData.getUpdateTime() + ". " + pDepthMarketData.getUpdateMillisec() + ": "
-                + pDepthMarketData.getInstrumentID() + " " + pDepthMarketData.getLastPrice());
+//        Log.i(TAG, "--->>>" + pDepthMarketData.getUpdateTime() + ". " + pDepthMarketData.getUpdateMillisec() + ": "
+//                + pDepthMarketData.getInstrumentID() + " " + pDepthMarketData.getLastPrice());
 
         CDepthMarketData data = new CDepthMarketData(pDepthMarketData);
 
@@ -217,9 +218,9 @@ public class MdService extends Service implements IMdSpiEvent {
     private void saveData(CDepthMarketData data, int position) {
 
         saveMinuteData(data, position);
-        saveMinutes5Data(data, position);
-        saveHourData(data, position);
-        saveDayData(data, position);
+//        saveMinutes5Data(data, position);
+//        saveHourData(data, position);
+//        saveDayData(data, position);
     }
 
     private void saveMinuteData(CDepthMarketData data, int position) {
@@ -238,9 +239,9 @@ public class MdService extends Service implements IMdSpiEvent {
             values.put(Provider.MinuteDataColumns.MACD_VALUE, minuteData.macd.value);
             values.put(Provider.MinuteDataColumns.TARGET_PRICE, minuteData.targetPrice);
 
-            Uri uri = getContentResolver().insert(Provider.MinuteDataColumns.CONTENT_URI, values);
-            int id = (int) ContentUris.parseId(uri);
-            Log.i(TAG, "saveMinuteData: " + data.instrumentId + ", id = " + id);
+//            Uri uri = getContentResolver().insert(Provider.MinuteDataColumns.CONTENT_URI, values);
+//            int id = (int) ContentUris.parseId(uri);
+//            Log.i(TAG, "saveMinuteData: " + data.instrumentId + ", id = " + id);
         }
 
     }
@@ -309,6 +310,7 @@ public class MdService extends Service implements IMdSpiEvent {
         boolean isFinish = false;
 
         if (isFirstDataInMinute(data, 1)) {
+
             minuteData = new MinuteData();
             minuteData.instrumentId = data.instrumentId;
             minuteData.openPrice = data.lastPrice;
@@ -316,14 +318,22 @@ public class MdService extends Service implements IMdSpiEvent {
             minuteData.updateTime = data.updateTime;
             minuteData.highPrice = data.lastPrice;
             minuteData.lowPrice = data.lastPrice;
-        } else if (isLastDataInMinute(data, 1)) {
+
+            Log.i(TAG, "--->NEW BAR  " + data.updateTime + ": " + data.lastPrice);
+
+        } else if (isLastDataInMinute(data, 1) && minuteData != null) {
+
             minuteData.closePrice = data.lastPrice;
             closePriceList.get(position).add(data.lastPrice);
             if (closePriceList.get(position).size() >= 32)
                 closePriceList.get(position).remove(0);
             minuteData.macd = macdCalculate(data.lastPrice, closePriceList.get(position).size(), position);
             minuteData.targetPrice = targetPriceCalculate(minuteData.macd, data.lastPrice, position);
+
+            Log.i(TAG, "--->BAR  " + data.updateTime + " FINISHED: " + data.lastPrice);
+
             isFinish = true;
+
         } else {
 
             if (minuteData == null)
@@ -350,7 +360,7 @@ public class MdService extends Service implements IMdSpiEvent {
         } else if (isLastDataInMinute(data, 5)) {
             minutes5Data.closePrice = data.lastPrice;
             closePriceList.get(position).add(data.lastPrice);
-            if (closePriceList.get(position).size() >= 32)
+            if (closePriceList.get(position).size() > 20)
                 closePriceList.get(position).remove(0);
 //            minutes5Data.macd = macdCalculate(data.lastPrice, closePriceList.get(position).size(),position);
 //            minuteData.targetPrice = targetPriceCalculate(minuteData.macd, data.lastPrice, position);
@@ -381,7 +391,7 @@ public class MdService extends Service implements IMdSpiEvent {
         } else if (isLastDataInMinute(data, 60)) {
             hourData.closePrice = data.lastPrice;
             closePriceList.get(position).add(data.lastPrice);
-            if (closePriceList.get(position).size() >= 32)
+            if (closePriceList.get(position).size() > 20)
                 closePriceList.get(position).remove(0);
 //            minutes5Data.macd = macdCalculate(data.lastPrice, closePriceList.get(position).size(),position);
 //            minuteData.targetPrice = targetPriceCalculate(minuteData.macd, data.lastPrice, position);
@@ -409,14 +419,18 @@ public class MdService extends Service implements IMdSpiEvent {
             dayData.updateTime = data.updateTime;
             dayData.highPrice = data.lastPrice;
             dayData.lowPrice = data.lastPrice;
-        } else {
+        }
+        if(isMarketClose(data.iUpdateMilliSec)){
             dayData.closePrice = data.lastPrice;
             dayData.highPrice = data.highestPrice;
             dayData.lowPrice = data.lowestPrice;
 
-//            closePriceList.get(position).add(data.lastPrice);
-//            if (closePriceList.get(position).size() >= 32)
-//                closePriceList.get(position).remove(0);
+            closePriceList.get(position).add(data.lastPrice);
+            if (closePriceList.get(position).size() > 20)
+                closePriceList.get(position).remove(0);
+
+            dayData.m20Value = m20Calculate(data.lastPrice, position);
+
 //            minutes5Data.macd = macdCalculate(data.lastPrice, closePriceList.get(position).size(),position);
 //            minuteData.targetPrice = targetPriceCalculate(minuteData.macd, data.lastPrice, position);
             isFinish = true;
@@ -425,11 +439,26 @@ public class MdService extends Service implements IMdSpiEvent {
         return isFinish;
     }
 
+    private double m20Calculate(double price, int position){
+        double ret;
+        closePriceList.get(position).add(price);
+
+        double sum=0;
+        for (int i =20; i>=0;i--)
+        {
+            sum += closePriceList.get(position).get(i);
+        }
+
+        ret = sum/20;
+
+        return ret;
+    }
+
 
     //region MACD calculate
     private MinuteData.Macd macdCalculate(double price, int cnt, int position) {
 
-        MinuteData.Macd ret = null;
+        MinuteData.Macd ret = new MinuteData.Macd();
         double[] arrClosePrice = new double[32];
         double[] diffLine = new double[9];
 
@@ -439,7 +468,7 @@ public class MdService extends Service implements IMdSpiEvent {
             }
         }
         arrClosePrice[31] = price;
-        assert ret != null;
+
         ret.diff = EMA(arrClosePrice, 32, 10) - EMA(arrClosePrice, 32, 22);
         diffLine[8] = ret.diff;
         for (int i = 0; i < 8; i++) {

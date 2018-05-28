@@ -49,9 +49,9 @@ public class CDepthMarketData implements Serializable {
         tradingDay = dataField.getTradingDay();
         updateTime = dataField.getUpdateTime();
 
-        iUpdateTime = Integer.parseInt(updateTime.substring(0, 1)) * 3600
-                + Integer.parseInt(updateTime.substring(3, 4)) * 60
-                + Integer.parseInt(updateTime.substring(6, 7));
+        iUpdateTime = Integer.parseInt(updateTime.substring(0, 2)) * 60 * 60
+                + Integer.parseInt(updateTime.substring(3, 5)) * 60
+                + Integer.parseInt(updateTime.substring(6, 8));
         iUpdateMilliSec = dataField.getUpdateMillisec() + 1000 * iUpdateTime;
 
     }
