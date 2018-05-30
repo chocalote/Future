@@ -47,7 +47,7 @@ public class MdService extends Service implements IMdSpiEvent {
     private static final String FRONT_ADDRESS = "tcp://180.168.146.187:10010";
     private static final String BROKER_ID = "9999";
     private static final String USER_ID = "021131";
-    private static final String PASSWORD = "chen8885257";
+    private static final String PASSWORD = "*********";
     private static int iRequestId = 0;
     private String[] INSTRUMENTS;
     private MinuteData minuteData;
