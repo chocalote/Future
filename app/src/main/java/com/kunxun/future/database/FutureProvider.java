@@ -170,31 +170,31 @@ public class FutureProvider extends ContentProvider {
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
 
         SQLiteDatabase db =mOpenHelper.getWritableDatabase();
-        String tableName, instrumentId;
+        String tableName, nullColumn;
         Uri contentUri;
 
         switch (Objects.requireNonNull(sUriMatcher).match(uri)) {
             case MINUTE_DATA:
                 tableName = Provider.MinuteDataColumns.TABLE_NAME;
-                instrumentId = Provider.MinuteDataColumns.INSTRUMENT_ID;
+                nullColumn = Provider.MinuteDataColumns.HIGH_PRICE;
                 contentUri = Provider.MinuteDataColumns.CONTENT_URI;
                 break;
 
             case MINUTES5_DATA:
                 tableName = Provider.Minutes5DataColumns.TABLE_NAME;
-                instrumentId = Provider.Minutes5DataColumns.INSTRUMENT_ID;
+                nullColumn = Provider.Minutes5DataColumns.HIGH_PRICE;
                 contentUri = Provider.Minutes5DataColumns.CONTENT_URI;
                 break;
 
             case HOUR_DATA:
                 tableName =Provider.HourDataColumns.TABLE_NAME;
-                instrumentId = Provider.HourDataColumns.INSTRUMENT_ID;
+                nullColumn = Provider.HourDataColumns.HIGH_PRICE;
                 contentUri = Provider.HourDataColumns.CONTENT_URI;
                 break;
 
             case DAY_DATA:
                 tableName = Provider.DayDataColumns.TABLE_NAME;
-                instrumentId = Provider.DayDataColumns.INSTRUMENT_ID;
+                nullColumn = Provider.DayDataColumns.HIGH_PRICE;
                 contentUri = Provider.DayDataColumns.CONTENT_URI;
                 break;
 
@@ -202,7 +202,7 @@ public class FutureProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
 
-        long rowId = db.insert(tableName, instrumentId, values);
+        long rowId = db.insert(tableName, nullColumn, values);
         if (rowId >0)
         {
             Uri noteUri = ContentUris.withAppendedId(contentUri, rowId);

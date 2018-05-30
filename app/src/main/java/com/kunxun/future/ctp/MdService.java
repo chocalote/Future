@@ -239,7 +239,7 @@ public class MdService extends Service implements IMdSpiEvent {
             values.put(Provider.MinuteDataColumns.MACD_VALUE, minuteData.macd.value);
             values.put(Provider.MinuteDataColumns.TARGET_PRICE, minuteData.targetPrice);
 
-//            Uri uri = getContentResolver().insert(Provider.MinuteDataColumns.CONTENT_URI, values);
+            Uri uri = getContentResolver().insert(Provider.MinuteDataColumns.CONTENT_URI, values);
 //            int id = (int) ContentUris.parseId(uri);
 //            Log.i(TAG, "saveMinuteData: " + data.instrumentId + ", id = " + id);
         }
