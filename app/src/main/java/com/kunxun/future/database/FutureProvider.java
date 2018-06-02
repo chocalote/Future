@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -169,6 +170,8 @@ public class FutureProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
 
+        Log.i("Lily", "*****INSERT*****");
+
         SQLiteDatabase db =mOpenHelper.getWritableDatabase();
         String tableName, nullColumn;
         Uri contentUri;
@@ -295,14 +298,14 @@ public class FutureProvider extends ContentProvider {
         sUriMatcher.addURI(Provider.AUTHORITY, "minuteData", MINUTE_DATA);
         sUriMatcher.addURI(Provider.AUTHORITY, "minuteData/#", MINUTE_DATA_ID);
 
-        sUriMatcher.addURI(Provider.AUTHORITY, "minuteData", MINUTES5_DATA);
-        sUriMatcher.addURI(Provider.AUTHORITY, "minuteData/#", MINUTES5_DATA_ID);
+        sUriMatcher.addURI(Provider.AUTHORITY, "minutes5Data", MINUTES5_DATA);
+        sUriMatcher.addURI(Provider.AUTHORITY, "minutes5Data/#", MINUTES5_DATA_ID);
 
-        sUriMatcher.addURI(Provider.AUTHORITY, "minuteData", HOUR_DATA);
-        sUriMatcher.addURI(Provider.AUTHORITY, "minuteData/#", HOUR_DATA_ID);
+        sUriMatcher.addURI(Provider.AUTHORITY, "hourData", HOUR_DATA);
+        sUriMatcher.addURI(Provider.AUTHORITY, "hourData/#", HOUR_DATA_ID);
 
-        sUriMatcher.addURI(Provider.AUTHORITY, "minuteData", DAY_DATA);
-        sUriMatcher.addURI(Provider.AUTHORITY, "minuteData/#", DAY_DATA_ID);
+        sUriMatcher.addURI(Provider.AUTHORITY, "dayData", DAY_DATA);
+        sUriMatcher.addURI(Provider.AUTHORITY, "dayData/#", DAY_DATA_ID);
 
 
         projectionMap = new HashMap<>();

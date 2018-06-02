@@ -1,4 +1,4 @@
-package com.kunxun.future.Utils;
+package com.kunxun.future.utils;
 
 import android.animation.ValueAnimator;
 import android.content.Context;

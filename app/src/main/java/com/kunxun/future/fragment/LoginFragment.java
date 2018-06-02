@@ -29,7 +29,7 @@ import android.widget.Toast;
 import com.kunxun.future.TransactionActivity;
 import com.kunxun.future.ctp.TraderService;
 import com.kunxun.future.R;
-import com.kunxun.future.Utils.CodeUtils;
+import com.kunxun.future.utils.CodeUtils;
 
 
 public class LoginFragment extends Fragment {

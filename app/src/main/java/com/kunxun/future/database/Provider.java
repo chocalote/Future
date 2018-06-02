@@ -5,7 +5,7 @@ import android.provider.BaseColumns;
 
 public class Provider {
 
-    public static final String AUTHORITY = "com.kunxun.future";
+    public static final String AUTHORITY = "com.kunxun.future.database";
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.kunxun.future";
 
     public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.kunxun.future";
@@ -13,11 +13,10 @@ public class Provider {
 
     public static final class MinuteDataColumns implements BaseColumns {
 
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/minutedata");
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/minuteData");
 
         public static final String TABLE_NAME = "MinuteData";
         public static final String DEFAULT_SORT_ORDER = "TradingDay, UpdateTime asc";
-
 
         public static final String INSTRUMENT_ID = "InstrumentId";
         public static final String TRADING_DAY = "TradingDay";
@@ -38,7 +37,7 @@ public class Provider {
 
     public static final class Minutes5DataColumns implements BaseColumns {
 
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/minutes5data");
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/minutes5Data");
 
         public static final String TABLE_NAME = "Minutes5Data";
         public static final String DEFAULT_SORT_ORDER = "TradingDay, UpdateTime asc";
@@ -59,7 +58,7 @@ public class Provider {
 
     public static final class HourDataColumns implements BaseColumns {
 
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/hourdata");
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/hourData");
 
         public static final String TABLE_NAME = "HourData";
         public static final String DEFAULT_SORT_ORDER = "TradingDay, UpdateTime asc";
@@ -80,7 +79,7 @@ public class Provider {
 
     public static final class DayDataColumns implements BaseColumns {
 
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/daydata");
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/dayData");
 
         public static final String TABLE_NAME = "DayData";
         public static final String DEFAULT_SORT_ORDER = "TradingDay, UpdateTime asc";

@@ -45,8 +45,8 @@ public class InstrumentActivity extends AppCompatActivity {
     ServiceConnection conn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            MdService.MdBinder mdBinder = (MdService.MdBinder)service;
-            mdBinder.callChangeInstrument(instrumentId);
+//            MdService.MdBinder mdBinder = (MdService.MdBinder)service;
+//            mdBinder.callChangeInstrument(instrumentId);
         }
 
         @Override

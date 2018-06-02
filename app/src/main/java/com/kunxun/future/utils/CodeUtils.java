@@ -1,4 +1,4 @@
-package com.kunxun.future.Utils;
+package com.kunxun.future.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

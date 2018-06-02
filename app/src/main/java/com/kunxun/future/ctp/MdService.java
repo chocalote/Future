@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Binder;
+
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -46,8 +46,8 @@ public class MdService extends Service implements IMdSpiEvent {
     private CThostFtdcMdApi mdApi;
     private static final String FRONT_ADDRESS = "tcp://180.168.146.187:10010";
     private static final String BROKER_ID = "9999";
-    private static final String USER_ID = "*****";
-    private static final String PASSWORD = "*********";
+    private static final String USER_ID = "021131";
+    private static final String PASSWORD = "chen8885257";
     private static int iRequestId = 0;
     private String[] INSTRUMENTS;
     private MinuteData minuteData;
@@ -75,19 +75,20 @@ public class MdService extends Service implements IMdSpiEvent {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Log.i(TAG, "服务成功被绑定");
-        return new MdBinder();
+//        Log.i(TAG, "服务成功被绑定");
+//        return new MdBinder();
+        return null;
     }
 
-    public class MdBinder extends Binder {
-
-        public void callChangeInstrument(String ins) {
-            int iResult = mdApi.UnSubscribeMarketData(INSTRUMENTS, INSTRUMENTS.length);
-            Log.i(TAG, "--->>> 发送行情取消订阅请求: " + ((iResult == 0) ? "成功" : "失败"));
-            iResult = mdApi.SubscribeMarketData(new String[]{ins}, 1);
-            Log.i(TAG, "--->>> 发送行情订阅请求: " + ((iResult == 0) ? "成功" : "失败"));
-        }
-    }
+//    public class MdBinder extends Binder {
+//
+//        public void callChangeInstrument(String ins) {
+//            int iResult = mdApi.UnSubscribeMarketData(INSTRUMENTS, INSTRUMENTS.length);
+//            Log.i(TAG, "--->>> 发送行情取消订阅请求: " + ((iResult == 0) ? "成功" : "失败"));
+//            iResult = mdApi.SubscribeMarketData(new String[]{ins}, 1);
+//            Log.i(TAG, "--->>> 发送行情订阅请求: " + ((iResult == 0) ? "成功" : "失败"));
+//        }
+//    }
 
 
     private void initMdRequest() {
@@ -214,14 +215,15 @@ public class MdService extends Service implements IMdSpiEvent {
     }
     //endregion
 
-
+    //region save data
     private void saveData(CDepthMarketData data, int position) {
 
         saveMinuteData(data, position);
-//        saveMinutes5Data(data, position);
-//        saveHourData(data, position);
-//        saveDayData(data, position);
+        saveMinutes5Data(data, position);
+        saveHourData(data, position);
+        saveDayData(data, position);
     }
+
 
     private void saveMinuteData(CDepthMarketData data, int position) {
         if (newMinuteData(data, position)) {
@@ -240,8 +242,8 @@ public class MdService extends Service implements IMdSpiEvent {
             values.put(Provider.MinuteDataColumns.TARGET_PRICE, minuteData.targetPrice);
 
             Uri uri = getContentResolver().insert(Provider.MinuteDataColumns.CONTENT_URI, values);
-//            int id = (int) ContentUris.parseId(uri);
-//            Log.i(TAG, "saveMinuteData: " + data.instrumentId + ", id = " + id);
+            int id = (int) ContentUris.parseId(uri);
+            Log.i(TAG, "saveMinuteData: " + data.instrumentId + ", id = " + id);
         }
 
     }
@@ -305,7 +307,9 @@ public class MdService extends Service implements IMdSpiEvent {
             Log.i(TAG, "saveDayData: " + data.instrumentId + ", id = " + id);
         }
     }
+    //endregion
 
+    //region new data
     private boolean newMinuteData(CDepthMarketData data, int position) {
         boolean isFinish = false;
 
@@ -438,7 +442,9 @@ public class MdService extends Service implements IMdSpiEvent {
 
         return isFinish;
     }
+    //endregion
 
+    //region M20 calculate
     private double m20Calculate(double price, int position){
         double ret;
         closePriceList.get(position).add(price);
@@ -453,7 +459,7 @@ public class MdService extends Service implements IMdSpiEvent {
 
         return ret;
     }
-
+    //endregion
 
     //region MACD calculate
     private MinuteData.Macd macdCalculate(double price, int cnt, int position) {
